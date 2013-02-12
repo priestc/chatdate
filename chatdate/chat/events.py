@@ -1,0 +1,60 @@
+from django_socketio import events, broadcast_channel
+from chat.models import ReadyToChat
+from chatdate.models import Relationship
+
+def emails_from_channel_name(channel_name):
+    """
+    Turn a channel name into a list of emails.
+    chat://foo@bar.com/todd@foo.com -> ['foo@bar.com', 'todd@foo.com']
+    """
+    return channel_name[7:].split('/')
+
+@events.on_message(channel="^chat://")
+def message(request, socket, context, message):
+    """
+    Handle 'authentication' messages between two people, including chat requests
+    and chat confirms.
+    """
+    type = message['type']
+
+    if type == 'request':
+        print "REQUEST"
+        from_email = message['from_email']
+        from_nickname = message['from_nickname']
+        channel = "chat://" + message['to']
+        data = {
+            'type': 'request',
+            'from_email': from_email,
+            'from_nickname': from_nickname,
+        }
+        broadcast_channel(data, channel)
+    elif type == 'confirm':
+        # user conformed chat request, relay this confirmation to the requesting user.
+        channel = "chat://" + message['requesting_email']
+        data = {
+            'type': 'confirm',
+            'who_confirmed_email': message['who_confirmed_email'],
+            'who_confirmed_nickname': message['who_confirmed_nickname']
+        }
+        broadcast_channel(data, channel)
+        emails = [message['who_confirmed_email'], message['requesting_email']]
+        Relationship.objects.get_or_make_relationship(*emails)
+
+@events.on_message(channel="^chat://.*@.*/.*@.*")
+def chat_message(request, socket, context, message):
+    """
+    Handle chat messages between two people.
+    """
+    channel_name = [x for x in socket.channels if len(x.split('@')) > 2][0]
+    emails = emails_from_channel_name(channel_name)
+    relationship = Relationship.objects.get_or_make_relationship(*emails)
+
+    if message['type'] == 'chat':
+        text = message['message']
+        #relationship.process_message(text)
+        socket.send_and_broadcast_channel(message)
+    elif type == 'action':
+        # user sent action such as 'facebook request', 'real life meeting', etc.
+        # TODO: implement this at some point
+        action = relationship.grant_action(message['action'])
+        socket.send_and_broadcast_channel(action.as_dict())

@@ -1,0 +1,300 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% load staticfiles %}
+
+ <!-- Header and Nav -->
+
+  <nav class="top-bar">
+    <ul>
+      <!-- Title Area -->
+      <li class="name">
+        <h1>
+          <a href="#">
+            Available Users
+          </a>
+        </h1>
+      </li>
+      <li class="toggle-topbar"><a href="{% url 'dashboard' %}">dashboard</a></li>
+    </ul>
+
+    <section>
+      <!-- Left Nav Section -->
+      <ul class="left">
+        <li class="divider"></li>
+        <li class="has-dropdown">
+          <a class="active" href="#">Main Item 1</a>
+          <ul class="dropdown">
+            <li><label>Section Name</label></li>
+            <li><a href="#" class="">Dropdown Level 1</a></li>
+            <li><a href="#">Dropdown Option</a></li>
+            <li><a href="#">Dropdown Option</a></li>
+            <li class="divider"></li>
+            <li><label>Section Name</label></li>
+            <li><a href="#">Dropdown Option</a></li>
+            <li><a href="#">Dropdown Option</a></li>
+            <li><a href="#">Dropdown Option</a></li>
+            <li class="divider"></li>
+            <li><a href="#">See all &rarr;</a></li>
+          </ul>
+        </li>
+        <li class="divider"></li>
+        <li><a href="#">Main Item 2</a></li>
+        <li class="divider"></li>
+        <li class="has-dropdown">
+          <a href="#">Main Item 3</a>
+          <ul class="dropdown">
+            <li><a href="#">Dropdown Option</a></li>
+            <li><a href="#">Dropdown Option</a></li>
+            <li><a href="#">Dropdown Option</a></li>
+            <li class="divider"></li>
+            <li><a href="#">See all &rarr;</a></li>
+          </ul>
+        </li>
+        <li class="divider"></li>
+      </ul>
+
+      <!-- Right Nav Section -->
+      <ul class="right">
+        <li class="divider"></li>
+        <li class="has-dropdown">
+          <a href="#">Main Item 4</a>
+          <ul class="dropdown">
+            <li><label>Section Name</label></li>
+            <li class="has-dropdown">
+              <a href="#" class="">Has Dropdown, Level 1</a>
+              <ul class="dropdown">
+                <li><a href="#">Dropdown Options</a></li>
+                <li><a href="#">Dropdown Options</a></li>
+                <li class="has-dropdown">
+                  <a href="#">Has Dropdown, Level 2</a>
+                  <ul class="dropdown test">
+                    <li><a href="#">Subdropdown Option</a></li>
+                    <li><a href="#">Subdropdown Option</a></li>
+                    <li><a href="#">Subdropdown Option</a></li>
+                  </ul>
+                </li>
+                <li><a href="#">Subdropdown Option</a></li>
+                <li><a href="#">Subdropdown Option</a></li>
+                <li><a href="#">Subdropdown Option</a></li>
+              </ul>
+            </li>
+            <li><a href="#">Dropdown Option</a></li>
+            <li><a href="#">Dropdown Option</a></li>
+            <li class="divider"></li>
+            <li><label>Section Name</label></li>
+            <li><a href="#">Dropdown Option</a></li>
+            <li><a href="#">Dropdown Option</a></li>
+            <li><a href="#">Dropdown Option</a></li>
+            <li class="divider"></li>
+            <li><a href="#">See all &rarr;</a></li>
+          </ul>
+        </li>
+        <li class="divider"></li>
+        <li><a href="#">Main Item 5</a></li>
+        <li class="divider"></li>
+        <li class="has-dropdown">
+          <a href="#">Main Item 6</a>
+          <ul class="dropdown">
+            <li><a href="#">Dropdown Option</a></li>
+            <li><a href="#">Dropdown Option</a></li>
+            <li><a href="#">Dropdown Option</a></li>
+            <li class="divider"></li>
+            <li><a href="#">See all &rarr;</a></li>
+          </ul>
+        </li>
+      </ul>
+    </section>
+  </nav>
+
+
+  <!-- End Header and Nav -->
+
+  <!-- Main Grid Section -->
+
+{% for user in locals %}
+  <div class="row">
+    <div class="four columns">
+      <div class="panel potential_chat_user">
+        <h5><a href="" data-email="{{ user.email }}">{{ user.nickname }}</a></h5>
+        <p>{{ user.status }}</p>
+      </div>
+    </div>
+    <div class="four columns">
+      <div class="panel">
+        <h5>Panel Title</h5>
+        <p>This is a six columns grid panel with an arbitrary height. Bacon ipsum dolor sit amet salami ham hock biltong ball tip drumstick sirloin pancetta meatball short loin.</p>
+      </div>
+    </div>
+    <div class="four columns">
+      <div class="panel">
+        <h5>Panel Title</h5>
+        <p>This is a three columns grid panel with an arbitrary height.</p>
+      </div>
+    </div>
+  </div>
+{% endfor %}
+
+  <div class="row" id="chat_section">
+    <div class="twelve columns">
+      <div id="chatbox">
+        <ul id="chats"></ul>
+      </div>
+
+      <form id="chatbar">
+        <input type="text"><input type="submit" value="send">
+      </form>
+    </div>
+  </div>
+
+  <!-- End Grid Section -->
+
+
+
+  <!-- Footer -->
+
+  <footer class="row">
+    <div class="twelve columns">
+      <hr />
+      <div class="row">
+        <div class="six columns">
+          <p>&copy; Copyright no one at all. Go to town.</p>
+        </div>
+        <div class="six columns">
+          <ul class="link-list right">
+            <li><a href="#">Section 1</a></li>
+            <li><a href="#">Section 2</a></li>
+            <li><a href="#">Section 3</a></li>
+            <li><a href="#">Section 4</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Included JS Files (Uncompressed) -->
+  <script src="{% static "foundation/javascripts/jquery.js" %}"></script>
+  
+  <script src="{% static "foundation/javascripts/jquery.foundation.mediaQueryToggle.js" %}"></script>
+  
+  <script src="{% static "foundation/javascripts/jquery.foundation.forms.js" %}"></script>
+  
+  <script src="{% static "foundation/javascripts/jquery.event.move.js" %}"></script>
+  
+  <script src="{% static "foundation/javascripts/jquery.event.swipe.js" %}"></script>
+  
+  <script src="{% static "foundation/javascripts/jquery.foundation.reveal.js" %}"></script>
+  
+  <script src="{% static "foundation/javascripts/jquery.foundation.orbit.js" %}"></script>
+  
+  <script src="{% static "foundation/javascripts/jquery.foundation.navigation.js" %}"></script>
+  
+  <script src="{% static "foundation/javascripts/jquery.foundation.buttons.js" %}"></script>
+  
+  <script src="{% static "foundation/javascripts/jquery.foundation.tabs.js" %}"></script>
+  
+  <script src="{% static "foundation/javascripts/jquery.foundation.tooltips.js" %}"></script>
+  
+  <script src="{% static "foundation/javascripts/jquery.foundation.accordion.js" %}"></script>
+  
+  <script src="{% static "foundation/javascripts/jquery.placeholder.js" %}"></script>
+  
+  <script src="{% static "foundation/javascripts/jquery.foundation.alerts.js" %}"></script>
+  
+  <script src="{% static "foundation/javascripts/jquery.foundation.topbar.js" %}"></script>
+  
+  <script src="{% static "foundation/javascripts/jquery.foundation.joyride.js" %}"></script>
+  
+  <script src="{% static "foundation/javascripts/jquery.foundation.clearing.js" %}"></script>
+  
+  <script src="{% static "foundation/javascripts/jquery.foundation.magellan.js" %}"></script>
+  
+  <!-- Included JS Files (Compressed) -->
+  <script src="{% static "foundation/javascripts/jquery.js" %}"></script>
+  <script src="{% static "foundation/javascripts/foundation.min.js" %}"></script>
+  
+  <!-- Initialize JS Plugins -->
+  <script src="{% static "foundation/javascripts/app.js" %}"></script>
+
+{% load socketio_tags %}
+{% socketio %}
+<script>
+    setInterval(function() {
+        // short poll to let the back end know this user is still available for chat
+        // TODO: maybe tie this into the socketio?
+        $.get("{% url "still_here" %}");
+    }, 30000);
+    
+    var nickname = "{{ user.nickname }}";
+    var email = "{{ user.email }}";
+
+    function add_to_chatbox(data) {
+        // Add a message coming back from the server to the chatbox.
+        // 'data' is the raw payload from socketio.
+        var line = "<span class='chat-message chat-message-" + data.nickname + "'>&lt;" + data.nickname + "&gt;</span> " + data.message
+        var chat = $("<li>").html(line);
+        $("ul#chats").append(chat);
+    }
+
+    var socket = new io.Socket();
+    socket.connect();
+    socket.on('connect', function() {
+        socket.subscribe('chat://' + email);
+    });
+    socket.on('message', function(data) {
+        console.log("got message", data);
+        if(data.type == 'confirm') {
+            // message coming in to confirm that user wants to chat.
+            $("#chat_section").show();
+            var dual_channel = [data.who_confirmed_email, email].sort().join('/')
+            socket.subscribe("chat://" + dual_channel)
+        } else if (data.type == 'request') {
+            // incoming chat request
+            result = confirm(data.from_nickname + " wants to chat with you");
+            if(result) {
+                // send confirmation and connect
+                socket.send({
+                    type: 'confirm',
+                    requesting_email: data.from_email,
+                    who_confirmed_email: email,
+                    who_confirmed_nickname: nickname
+                })
+                var dual_channel = [data.from_email, email].sort().join('/')
+                socket.subscribe("chat://" + dual_channel);
+                $("#chat_section").show();
+            }
+        } else {
+            // a chat message coming in.
+            add_to_chatbox(data);
+        }
+    });
+
+    $("#chatbar").submit(function() {
+        // adding a new line to the chat
+        var textbox =  $("#chatbar input[type=text]");
+        var message = textbox.val();
+        var data = {"type": 'chat', "message": message, 'nickname': nickname};
+        socket.send(data);
+        textbox.val("");
+        return false;
+    });
+
+    $(".potential_chat_user a").click(function() {
+        // send off a request a chat with a user
+        socket.send({
+            type: 'request',
+            to: $(this).attr('data-email'),
+            from_email: email,
+            from_nickname: nickname
+        });
+        var div = $(this).parent()
+        div.addClass("request-sent");
+        div.append("<span>Chat request sent to " + $(this).text() + "</span>");
+        $(this).hide();
+        return false;
+    });
+
+</script>
+
+
+{% endblock %}
