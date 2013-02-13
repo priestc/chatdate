@@ -18,7 +18,6 @@ def message(request, socket, context, message):
     type = message['type']
 
     if type == 'request':
-        print "REQUEST"
         from_email = message['from_email']
         from_nickname = message['from_nickname']
         channel = "chat://" + message['to']
@@ -51,7 +50,17 @@ def chat_message(request, socket, context, message):
 
     if message['type'] == 'chat':
         text = message['message']
-        #relationship.process_message(text)
+        sent_by = message['sent_by_email']
+        relationship.process_message(text, sent_by=sent_by)
+        sender, sent_to, both = relationship.get_changes()
+        if both:
+            socket.send_and_broadcast_channel(both)
+        if sender:
+            channel = "email of sender"
+            broadcast_channel(sender, channel)
+        if sent_to:
+            channel = "email of sent_to"
+            broadcast_channel(sent_to, channel)
         socket.send_and_broadcast_channel(message)
     elif type == 'action':
         # user sent action such as 'facebook request', 'real life meeting', etc.

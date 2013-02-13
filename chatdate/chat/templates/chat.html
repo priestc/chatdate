@@ -2,7 +2,26 @@
 
 {% block content %}
 {% load staticfiles %}
+<style>
+    .chat-message-{{ user.nickname }} {
+        color: red;
+    }
+    .chat_event {
+        color: blue;
+        font-weight: bold;
+    }
+    #chatbox {
+        padding: 3px;
+        height: 300px;
+        background: #DFDFDF;
+        border: 1px solid black;
+        overflow: scroll;
+    }
 
+    #chat_section {
+        display: none;
+    }
+</style>
  <!-- Header and Nav -->
 
   <nav class="top-bar">
@@ -10,12 +29,12 @@
       <!-- Title Area -->
       <li class="name">
         <h1>
-          <a href="#">
-            Available Users
+          <a href="{% url 'dashboard' %}">
+            ChatDate
           </a>
         </h1>
       </li>
-      <li class="toggle-topbar"><a href="{% url 'dashboard' %}">dashboard</a></li>
+      <li class="toggle-topbar"><a href="#"></a></li>
     </ul>
 
     <section>
@@ -111,7 +130,7 @@
   <!-- End Header and Nav -->
 
   <!-- Main Grid Section -->
-
+<div id="user_choices">
 {% for user in locals %}
   <div class="row">
     <div class="four columns">
@@ -134,6 +153,7 @@
     </div>
   </div>
 {% endfor %}
+</div>
 
   <div class="row" id="chat_section">
     <div class="twelve columns">
@@ -151,7 +171,7 @@
 
 
 
-  <!-- Footer -->
+  <!-- Footer
 
   <footer class="row">
     <div class="twelve columns">
@@ -171,7 +191,7 @@
       </div>
     </div>
   </footer>
-
+    -->
   <!-- Included JS Files (Uncompressed) -->
   <script src="{% static "foundation/javascripts/jquery.js" %}"></script>
   
@@ -219,82 +239,10 @@
 {% load socketio_tags %}
 {% socketio %}
 <script>
-    setInterval(function() {
-        // short poll to let the back end know this user is still available for chat
-        // TODO: maybe tie this into the socketio?
-        $.get("{% url "still_here" %}");
-    }, 30000);
-    
-    var nickname = "{{ user.nickname }}";
-    var email = "{{ user.email }}";
-
-    function add_to_chatbox(data) {
-        // Add a message coming back from the server to the chatbox.
-        // 'data' is the raw payload from socketio.
-        var line = "<span class='chat-message chat-message-" + data.nickname + "'>&lt;" + data.nickname + "&gt;</span> " + data.message
-        var chat = $("<li>").html(line);
-        $("ul#chats").append(chat);
-    }
-
-    var socket = new io.Socket();
-    socket.connect();
-    socket.on('connect', function() {
-        socket.subscribe('chat://' + email);
-    });
-    socket.on('message', function(data) {
-        console.log("got message", data);
-        if(data.type == 'confirm') {
-            // message coming in to confirm that user wants to chat.
-            $("#chat_section").show();
-            var dual_channel = [data.who_confirmed_email, email].sort().join('/')
-            socket.subscribe("chat://" + dual_channel)
-        } else if (data.type == 'request') {
-            // incoming chat request
-            result = confirm(data.from_nickname + " wants to chat with you");
-            if(result) {
-                // send confirmation and connect
-                socket.send({
-                    type: 'confirm',
-                    requesting_email: data.from_email,
-                    who_confirmed_email: email,
-                    who_confirmed_nickname: nickname
-                })
-                var dual_channel = [data.from_email, email].sort().join('/')
-                socket.subscribe("chat://" + dual_channel);
-                $("#chat_section").show();
-            }
-        } else {
-            // a chat message coming in.
-            add_to_chatbox(data);
-        }
-    });
-
-    $("#chatbar").submit(function() {
-        // adding a new line to the chat
-        var textbox =  $("#chatbar input[type=text]");
-        var message = textbox.val();
-        var data = {"type": 'chat', "message": message, 'nickname': nickname};
-        socket.send(data);
-        textbox.val("");
-        return false;
-    });
-
-    $(".potential_chat_user a").click(function() {
-        // send off a request a chat with a user
-        socket.send({
-            type: 'request',
-            to: $(this).attr('data-email'),
-            from_email: email,
-            from_nickname: nickname
-        });
-        var div = $(this).parent()
-        div.addClass("request-sent");
-        div.append("<span>Chat request sent to " + $(this).text() + "</span>");
-        $(this).hide();
-        return false;
-    });
-
+var nickname = "{{ user.nickname }}";
+var email = "{{ user.email }}";
+var short_poll_url = "{% url "still_here" %}";
 </script>
-
+<script src="{% static "chat.js" %}"></script>
 
 {% endblock %}

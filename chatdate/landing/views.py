@@ -5,6 +5,12 @@ from django.core.urlresolvers import reverse
 from .forms import RegisterForm
 
 def landingpage(request):
+    if request.POST:
+        user = authenticate(username=request.POST['email'], password=request.POST['password'])
+        login(request, user)
+        url = reverse('dashboard')
+        return HttpResponseRedirect(url)
+    
     return TemplateResponse(request, 'landingpage.html', {})
 
 def register_start(request):

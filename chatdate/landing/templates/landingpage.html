@@ -5,4 +5,11 @@
 <h1>Welcome to chatdate!!</h1>
 <a href="{% url "register_start" %}">Register</a>
 
+<form method="post">
+    {% csrf_token %}
+    Email: <input type="email" name="email">
+    password: <input type="password" name="password">
+    <input type="submit">
+</form>
+
 {% endblock %}

@@ -1,0 +1,10 @@
+<div class="dashboard_relationship {{ person.gender }}" style="overflow: hidden">
+    <div style="float: left">
+        <img src="http://placehold.it/64x64" >
+    </div>
+    <div style="float: left; padding: 3px">
+        <strong>{{ person.nickname }}</strong> - {{relationship.get_status_display }}<br>
+        <a href="" data-email="{{ person.email }}">Initiate Chat</a>
+        {{ person.tagline }}
+    </div>
+</div>
