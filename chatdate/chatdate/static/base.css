@@ -12,6 +12,7 @@ header {
 }
 header .logo {
     font-size: xx-large;
+    padding-left: 5px;
 }
 
 header a {

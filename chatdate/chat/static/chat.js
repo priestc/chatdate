@@ -20,14 +20,16 @@ function add_to_chatbox(data) {
     $("#chatbox").scrollTop($("#chatbox")[0].scrollHeight);
 }
 
-function switch_to_chat() {
+function switch_to_chat(nickname) {
     $("#chat_section").show();
     $("#user_choices").hide();
+    $("#chat_title").text("Chatting with " + nickname);
 }
 
 function switch_to_selection() {
     $("#chat_section").hide();
     $("#user_choices").show();
+    $("#chat_title").text("Pick a chat partner");
 }
 
 var socket = new io.Socket();
@@ -42,7 +44,7 @@ socket.on('message', function(data) {
         $("#chat_section").show();
         var dual_channel = [data.who_confirmed_email, email].sort().join('/')
         socket.subscribe("chat://" + dual_channel)
-        switch_to_chat();
+        switch_to_chat(data.who_confirmed_nickname);
     } else if (data.type == 'request') {
         // incoming chat request
         result = confirm(data.from_nickname + " wants to chat with you");
@@ -56,7 +58,7 @@ socket.on('message', function(data) {
             })
             var dual_channel = [data.from_email, email].sort().join('/')
             socket.subscribe("chat://" + dual_channel);
-            switch_to_chat();
+            switch_to_chat(data.from_nickname);
         }
     } else if (data.type == 'event') {
         // event occured!

@@ -21,17 +21,17 @@
   }
 
 </style>
-  <h1>Dashboard</h1>
+  <h1>Relationships</h1>
 
   <div class="row">
     {% for relationship in relationships %}
       {% if relationship.user1.email == user.email %}
         {% with person=relationship.user2 %}
-          {% include "dashboard_relationship.html" %}
+          {% include "relationship_box.html" %}
         {% endwith %}
       {% else %}
         {% with person=relationship.user2 %}
-          {% include "dashboard_relationship.html" %}
+          {% include "relationship_box.html" %}
         {% endwith %}
       {% endif %}
     <hr>

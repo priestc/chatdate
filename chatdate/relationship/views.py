@@ -1,8 +1,8 @@
 from django.template.response import TemplateResponse
-from chatdate.models import Relationship
+from .models import Relationship
 
-def dashboard(request):
+def relationships(request):
     relationships = Relationship.objects.my_relationships(request.user)
-    return TemplateResponse(request, "dashboard.html", {
+    return TemplateResponse(request, "relationships.html", {
         'relationships': relationships
     })

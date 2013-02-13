@@ -1,6 +1,6 @@
 from django_socketio import events, broadcast_channel
-from chat.models import ReadyToChat
-from chatdate.models import Relationship
+from .models import ReadyToChat
+from relationship.models import Relationship
 
 def emails_from_channel_name(channel_name):
     """

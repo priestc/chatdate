@@ -8,7 +8,7 @@ def landingpage(request):
     if request.POST:
         user = authenticate(username=request.POST['email'], password=request.POST['password'])
         login(request, user)
-        url = reverse('dashboard')
+        url = reverse('relationships')
         return HttpResponseRedirect(url)
     
     return TemplateResponse(request, 'landingpage.html', {})
@@ -24,7 +24,7 @@ def register_start(request):
             new_user.save()
             user = authenticate(username=request.POST['email'], password=request.POST['password'])
             login(request, user)
-            url = reverse('dashboard')
+            url = reverse('relationships')
             return HttpResponseRedirect(url)
         else:
             status = 400

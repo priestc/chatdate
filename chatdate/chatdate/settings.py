@@ -120,7 +120,7 @@ INSTALLED_APPS = (
     #'django.contrib.gis',
     'django_extensions',
     'landing',
-    'dashboard',
+    'relationship',
     'chat',
     'chatdate',
     'django_socketio',

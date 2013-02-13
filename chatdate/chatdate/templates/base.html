@@ -10,7 +10,10 @@
     </head>
     <body>
         <header>
-            <span class="logo">ChatDate</span> | <a href="{% url 'chat' %}">Chat</a> | <a href="{% url 'dashboard' %}">Dashboard</a>
+            <span class="logo">ChatDate</span> |
+            <a href="{% url 'chat' %}">Chat</a> |
+            <a href="{% url 'relationships' %}">Relationships</a> |
+            <a href="{% url 'logout' %}">Logout</a>
         </header>
         <div id="content">
         {% block content %}{% endblock %}
