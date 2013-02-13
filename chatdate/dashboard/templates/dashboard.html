@@ -21,199 +21,23 @@
   }
 
 </style>
-  <!-- Header and Nav -->
-  <nav class="top-bar">
-    <ul>
-      <!-- Title Area -->
-      <li class="name">
-        <h1>
-          <a href="{% url 'dashboard' %}">
-            ChatDate
-          </a>
-        </h1>
-      </li>
-      <li class="toggle-topbar"><a href="#"></a></li>
-    </ul>
+  <h1>Dashboard</h1>
 
-    <section>
-      <!-- Left Nav Section -->
-      <ul class="left">
-        <li class="divider"></li>
-        <li class="has-dropdown">
-          <a class="active" href="#">Main Item 1</a>
-          <ul class="dropdown">
-            <li><label>Section Name</label></li>
-            <li><a href="#" class="">Dropdown Level 1</a></li>
-            <li><a href="#">Dropdown Option</a></li>
-            <li><a href="#">Dropdown Option</a></li>
-            <li class="divider"></li>
-            <li><label>Section Name</label></li>
-            <li><a href="#">Dropdown Option</a></li>
-            <li><a href="#">Dropdown Option</a></li>
-            <li><a href="#">Dropdown Option</a></li>
-            <li class="divider"></li>
-            <li><a href="#">See all &rarr;</a></li>
-          </ul>
-        </li>
-        <li class="divider"></li>
-        <li><a href="#">Main Item 2</a></li>
-        <li class="divider"></li>
-        <li class="has-dropdown">
-          <a href="#">Main Item 3</a>
-          <ul class="dropdown">
-            <li><a href="#">Dropdown Option</a></li>
-            <li><a href="#">Dropdown Option</a></li>
-            <li><a href="#">Dropdown Option</a></li>
-            <li class="divider"></li>
-            <li><a href="#">See all &rarr;</a></li>
-          </ul>
-        </li>
-        <li class="divider"></li>
-      </ul>
-
-      <!-- Right Nav Section -->
-      <ul class="right">
-        <li class="divider"></li>
-        <li class="has-dropdown">
-          <a href="#">Main Item 4</a>
-          <ul class="dropdown">
-            <li><label>Section Name</label></li>
-            <li class="has-dropdown">
-              <a href="#" class="">Has Dropdown, Level 1</a>
-              <ul class="dropdown">
-                <li><a href="#">Dropdown Options</a></li>
-                <li><a href="#">Dropdown Options</a></li>
-                <li class="has-dropdown">
-                  <a href="#">Has Dropdown, Level 2</a>
-                  <ul class="dropdown test">
-                    <li><a href="#">Subdropdown Option</a></li>
-                    <li><a href="#">Subdropdown Option</a></li>
-                    <li><a href="#">Subdropdown Option</a></li>
-                  </ul>
-                </li>
-                <li><a href="#">Subdropdown Option</a></li>
-                <li><a href="#">Subdropdown Option</a></li>
-                <li><a href="#">Subdropdown Option</a></li>
-              </ul>
-            </li>
-            <li><a href="#">Dropdown Option</a></li>
-            <li><a href="#">Dropdown Option</a></li>
-            <li class="divider"></li>
-            <li><label>Section Name</label></li>
-            <li><a href="#">Dropdown Option</a></li>
-            <li><a href="#">Dropdown Option</a></li>
-            <li><a href="#">Dropdown Option</a></li>
-            <li class="divider"></li>
-            <li><a href="#">See all &rarr;</a></li>
-          </ul>
-        </li>
-        <li class="divider"></li>
-        <li><a href="#">Main Item 5</a></li>
-        <li class="divider"></li>
-        <li class="has-dropdown">
-          <a href="#">Main Item 6</a>
-          <ul class="dropdown">
-            <li><a href="#">Dropdown Option</a></li>
-            <li><a href="#">Dropdown Option</a></li>
-            <li><a href="#">Dropdown Option</a></li>
-            <li class="divider"></li>
-            <li><a href="#">See all &rarr;</a></li>
-          </ul>
-        </li>
-      </ul>
-    </section>
-  </nav>
-  <div class="row">
-    <div class="twelve columns">
-      <div class="panel">
-        <h1>Your Dashboard</h1>
-      </div>
-    </div>
-  </div>
-  
-  <!-- End Header and Nav -->
   <div class="row">
     {% for relationship in relationships %}
       {% if relationship.user1.email == user.email %}
         {% with person=relationship.user2 %}
           {% include "dashboard_relationship.html" %}
         {% endwith %}
-       {% else %}
+      {% else %}
         {% with person=relationship.user2 %}
           {% include "dashboard_relationship.html" %}
         {% endwith %}
       {% endif %}
     <hr>
     {% empty %}
+    No relationships
     {% endfor %}
   </div>
-  <!-- Footer -->
-  
-  <footer class="row">
-    <div class="twelve columns">
-      <hr />
-      <div class="row">
-        <div class="six columns">
-          <p>&copy; Copyright no one at all. Go to town.</p>
-        </div>
-        <div class="six columns">
-          <ul class="link-list right">
-            <li><a href="#">Section 1</a></li>
-            <li><a href="#">Section 2</a></li>
-            <li><a href="#">Section 3</a></li>
-            <li><a href="#">Section 4</a></li>
-            <li><a href="#">Section 5</a></li>
-            <li><a href="#">Section 6</a></li>
-          </ul>
-        </div>
-      </div>
-    </div> 
-  </footer>
-
-  <!-- Included JS Files (Uncompressed) -->
-  
-  <script src="{% static "foundation/javascripts/jquery.js" %}"></script>
-  
-  <script src="{% static "foundation/javascripts/jquery.foundation.mediaQueryToggle.js" %}"></script>
-  
-  <script src="{% static "foundation/javascripts/jquery.foundation.forms.js" %}"></script>
-  
-  <script src="{% static "foundation/javascripts/jquery.event.move.js" %}"></script>
-  
-  <script src="{% static "foundation/javascripts/jquery.event.swipe.js" %}"></script>
-  
-  <script src="{% static "foundation/javascripts/jquery.foundation.reveal.js" %}"></script>
-  
-  <script src="{% static "foundation/javascripts/jquery.foundation.orbit.js" %}"></script>
-  
-  <script src="{% static "foundation/javascripts/jquery.foundation.navigation.js" %}"></script>
-  
-  <script src="{% static "foundation/javascripts/jquery.foundation.buttons.js" %}"></script>
-  
-  <script src="{% static "foundation/javascripts/jquery.foundation.tabs.js" %}"></script>
-  
-  <script src="{% static "foundation/javascripts/jquery.foundation.tooltips.js" %}"></script>
-  
-  <script src="{% static "foundation/javascripts/jquery.foundation.accordion.js" %}"></script>
-  
-  <script src="{% static "foundation/javascripts/jquery.placeholder.js" %}"></script>
-  
-  <script src="{% static "foundation/javascripts/jquery.foundation.alerts.js" %}"></script>
-  
-  <script src="{% static "foundation/javascripts/jquery.foundation.topbar.js" %}"></script>
-  
-  <script src="{% static "foundation/javascripts/jquery.foundation.joyride.js" %}"></script>
-  
-  <script src="{% static "foundation/javascripts/jquery.foundation.clearing.js" %}"></script>
-  
-  <script src="{% static "foundation/javascripts/jquery.foundation.magellan.js" %}"></script>
-  
-  
-  <!-- Included JS Files (Compressed) -->
-  <script src="{% static "foundation/javascripts/jquery.js" %}"></script>
-  <script src="{% static "foundation/javascripts/foundation.min.js" %}"></script>
-  
-  <!-- Initialize JS Plugins -->
-  <script src="{% static "foundation/javascripts/app.js" %}"></script>
 
 {% endblock %}
