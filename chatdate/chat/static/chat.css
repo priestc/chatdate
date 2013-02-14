@@ -2,18 +2,37 @@
     color: blue;
     font-weight: bold;
 }
-#chatbox {
-    padding: 3px;
-    height: 300px;
-    background: #DFDFDF;
-    border: 1px solid black;
-    overflow: scroll;
-}
 
 #chat_section {
     display: none;
+    width: 300px;
+    height: 400px;
 }
 
 #chat_template {
     display: none;
+}
+
+/* container with chat messages inside */
+.chatbox {
+    height: 200px;
+    background: #DFDFDF;
+    overflow: scroll;
+}
+
+/* chat messages */
+.chatbox ul {
+    list-style-type: none;
+    padding-left: 3px;
+}
+
+/* the bar you type chats into */
+.chatbar input[type=text] {
+    width: 75%;
+    margin: 3px;
+}
+
+/* The send button */
+.chatbar input[type=submit] {
+    width: 20%;
 }
