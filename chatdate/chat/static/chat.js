@@ -4,109 +4,102 @@ setInterval(function() {
     $.get(short_poll_url);
 }, 30000);
 
+var socket = new io.Socket();
+socket.connect();
+socket.on('connect', function() {
+    // through this channel I will send and recieve all chat messages.
+    // and maybe possibly other things.
+    socket.subscribe(my_hash);
+});
+socket.on('message', function(data) {
+    console.log("got message: ", data);
+    add_to_chatbox(data);
+});
+
 function add_to_chatbox(data) {
     // Add a message coming back from the server to the chatbox.
     // 'data' is the raw payload from socketio.
 
     var item = $("<li>");
     if(data.type == 'chat') {
-        var n = data.nickname;
-        var line = "<span class='chat-message chat-message-" + n + "'>&lt;" + n + "&gt;</span> " + data.message
+        var n = data.sent_by.nickname;
+        var line = "<span class='chat-message chat-message-" + n + "'>&lt;" + n + "&gt;</span> " + data.message;
         item.html(line);
     } else if (data.type == 'event') {
         item.html("<span class='chat_event'>" + data.message + "</span>")
     }
-    $("ul#chats").append(item);
-    $("#chatbox").scrollTop($("#chatbox")[0].scrollHeight);
-}
-
-function switch_to_chat(nickname) {
-    $("#chat_section").show();
-    $("#user_choices").hide();
-    $("#chat_title").text("Chatting with " + nickname);
-}
-
-function switch_to_selection() {
-    $("#chat_section").hide();
-    $("#user_choices").show();
-    $("#chat_title").text("Pick a chat partner");
-}
-
-var socket = new io.Socket();
-socket.connect();
-socket.on('connect', function() {
-    socket.subscribe('chat://' + email);
-});
-socket.on('message', function(data) {
-    console.log("got message", data);
-    if(data.type == 'confirm') {
-        // message coming in to confirm that user wants to chat.
-        $("#chat_section").show();
-        var dual_channel = [data.who_confirmed_email, email].sort().join('/')
-        socket.subscribe("chat://" + dual_channel)
-        switch_to_chat(data.who_confirmed_nickname);
-    } else if (data.type == 'request') {
-        // incoming chat request
-        result = confirm(data.from_nickname + " wants to chat with you");
-        if(result) {
-            // send confirmation and connect
-            socket.send({
-                type: 'confirm',
-                requesting_email: data.from_email,
-                who_confirmed_email: email,
-                who_confirmed_nickname: nickname
-            })
-            var dual_channel = [data.from_email, email].sort().join('/')
-            socket.subscribe("chat://" + dual_channel);
-            switch_to_chat(data.from_nickname);
-        }
-    } else if (data.type == 'event') {
-        // event occured!
-        if(data.new_status) {
-            add_to_chatbox({
-                type: 'event',
-                message: "Your relationship has been upgraded to level " + data.new_status,
-            });
-        }
-    } else if (data.type == 'chat') {
-        // a regular chat message came in.
-        add_to_chatbox({
-            type: 'chat',
-            nickname: data.sent_by_nickname,
-            message: data.message
-        });
+    var chat_hash = data.sent_by.hash;
+    if(data.sent_by.hash == my_hash) {
+        chat_hash = data.sent_to.hash;
     }
-});
+    var chatbox = $("#" + chat_hash);
+    if(chatbox.length == 0) {
+        // this chat messag has come from a new user. Make a new box.
+        make_new_chat(data.sent_by.hash, data.sent_by.nickname);
+        chatbox = $("#" + chat_hash);
+    }
 
-$("#chatbar").submit(function() {
-    // adding a new line to the chat
-    var textbox =  $("#chatbar input[type=text]");
+    console.log(chatbox);
+    chatbox.find("ul").append(item);
+    chatbox.scrollTop(chatbox[0].scrollHeight);
+}
+
+function make_new_chat(hash, nickname) {
+    // make a new chatbox, and bind the sending events.
+
+    $("#chat_section").show();
+
+    var chat_element = $("#" + channel);
+    if(chat_element.length) {
+        chat_element.show();
+    } else {
+        var new_chatbox = $("#chat_template").clone().attr("id", hash);
+        new_chatbox.find(".chat_title").text("Chatting with " + nickname);
+        $("#chat_section").append(new_chatbox);
+    }
+
+    new_chatbox.submit(function(event) {
+        return send_chat_message(hash, nickname);
+    });
+}
+
+function send_chat_message(to_hash, to_nickname) {
+    // Add a new line to the chat when the "send" button is pressed or
+    // enter key is pressed. This function gets binded to new chatboxes when
+    // they are created
+    var chatbox =  $('#' + to_hash);
+    var textbox = chatbox.find("input[type=text]");
     var message = textbox.val();
+
     if(!message) {
         return false
     }
-    var data = {
+
+    socket.send({
         type: 'chat',
         message: message,
-        sent_by_nickname: nickname,
-        sent_by_email: email
-    };
-    socket.send(data);
-    textbox.val("");
-    return false;
-});
+        sent_by: {
+            nickname: my_nickname,
+            hash: my_hash,
+        },
+        sent_to: {
+            nickname: to_nickname,
+            hash: to_hash,
+        }
+    });
+
+    textbox.val(""); // clear the chat bar after submitting.
+    return false; // to avoid the form from submitting.
+}
 
 $(".potential_chat_user a").click(function() {
-    // send off a request a chat with a user
-    socket.send({
-        type: 'request',
-        to: $(this).attr('data-email'),
-        from_email: email,
-        from_nickname: nickname
-    });
-    var div = $(this).parent()
-    div.addClass("request-sent");
-    div.append("<span>Chat request sent to " + $(this).text() + "</span>");
-    $(this).hide();
+    // open up a new chat window when you click on a users name.
+    var nickname = $(this).text();
+    var hash = $(this).attr("data-hash");
+    
+    if($("#" + hash).length == 0) {
+        // don't make duplicate chatboxes for the same user.
+        make_new_chat(hash, nickname);
+    }
     return false;
 });

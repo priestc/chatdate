@@ -1,6 +1,8 @@
 import datetime
+import hashlib
 from dateutil import parser
 
+from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.db import models
 import django.utils.timezone
@@ -40,6 +42,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     status = models.CharField(max_length=140)
     reputation = models.IntegerField(default=0)
 
+    unique_key = models.CharField(max_length=32, db_index=True)
+
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
@@ -66,6 +70,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_short_name(self):
         return self.nickname
+
+    def save(self, *a, **k):
+        if not self.unique_key:
+            self.unique_key = hashlib.md5(str(self.id) + settings.SECRET_KEY).hexdigest()
+        super(User, self).save(*a, **k)
 
     def __unicode__(self):
         return "%s(%s)" % (self.full_name, self.reputation)

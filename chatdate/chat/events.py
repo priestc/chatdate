@@ -67,3 +67,12 @@ def chat_message(request, socket, context, message):
         # TODO: implement this at some point
         action = relationship.grant_action(message['action'])
         socket.send_and_broadcast_channel(action.as_dict())
+
+
+@events.on_message(channel="^[a-z0-9]{32}")
+def handle_message(request, socket, context, message):
+    broadcast_channel(message, message['sent_to']['hash'])
+    broadcast_channel(message, message['sent_by']['hash'])
+
+
+
