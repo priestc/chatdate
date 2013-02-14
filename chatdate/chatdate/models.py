@@ -42,7 +42,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     status = models.CharField(max_length=140)
     reputation = models.IntegerField(default=0)
 
-    unique_key = models.CharField(max_length=32, db_index=True)
+    hash = models.CharField(max_length=32, db_index=True)
 
     objects = UserManager()
 
@@ -72,8 +72,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.nickname
 
     def save(self, *a, **k):
-        if not self.unique_key:
-            self.unique_key = hashlib.md5(str(self.id) + settings.SECRET_KEY).hexdigest()
+        if not self.hash:
+            self.hash = hashlib.md5(self.email + settings.SECRET_KEY).hexdigest()
         super(User, self).save(*a, **k)
 
     def __unicode__(self):

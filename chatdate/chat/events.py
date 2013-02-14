@@ -71,8 +71,15 @@ def chat_message(request, socket, context, message):
 
 @events.on_message(channel="^[a-z0-9]{32}")
 def handle_message(request, socket, context, message):
-    broadcast_channel(message, message['sent_to']['hash'])
-    broadcast_channel(message, message['sent_by']['hash'])
+    sent_by = message['sent_by']['hash']
+    sent_to = message['sent_to']['hash']
+
+    relationship = Relationship.objects.get_or_make_relationship(sent_to, sent_by)
+    relationship.process_message(message['message'], sent_by=sent_by)
+    info_for_sender, info_for_sent_to, info_for_both = relationship.get_changes()
+
+    broadcast_channel(message, sent_to)
+    broadcast_channel(message, sent_by)
 
 
 

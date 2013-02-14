@@ -3,10 +3,18 @@
     font-weight: bold;
 }
 
+/* contains all chat containers */ 
 #chat_section {
     display: none;
-    width: 300px;
+    overflow: hidden;
+}
+
+/* contains a chatbox, chat title, and chat bar */
+.chat_container {
+    float: left;
     height: 400px;
+    width: 300px;
+    margin: 5px;
 }
 
 #chat_template {

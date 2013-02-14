@@ -32,15 +32,15 @@ function add_to_chatbox(data) {
     if(data.sent_by.hash == my_hash) {
         chat_hash = data.sent_to.hash;
     }
-    var chatbox = $("#" + chat_hash);
-    if(chatbox.length == 0) {
+    var chat_container = $("#" + chat_hash);
+    if(chat_container.length == 0) {
         // this chat messag has come from a new user. Make a new box.
         make_new_chat(data.sent_by.hash, data.sent_by.nickname);
-        chatbox = $("#" + chat_hash);
+        chat_container = $("#" + chat_hash);
     }
 
-    console.log(chatbox);
-    chatbox.find("ul").append(item);
+    chat_container.find("ul").append(item);
+    var chatbox = chat_container.find(".chatbox");
     chatbox.scrollTop(chatbox[0].scrollHeight);
 }
 
@@ -54,7 +54,7 @@ function make_new_chat(hash, nickname) {
         chat_element.show();
     } else {
         var new_chatbox = $("#chat_template").clone().attr("id", hash);
-        new_chatbox.find(".chat_title").text("Chatting with " + nickname);
+        new_chatbox.find(".chat_title").text(nickname);
         $("#chat_section").append(new_chatbox);
     }
 

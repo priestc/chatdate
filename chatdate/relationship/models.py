@@ -37,20 +37,20 @@ class RelationshipManager(models.Manager):
     def my_relationships(self, user):
         return self.filter(models.Q(user1=user) | models.Q(user2=user))
 
-    def get_or_make_relationship(self, email1, email2):
+    def get_or_make_relationship(self, hash1, hash2):
         """
         Make a relationship object from two users, if one doesnt alreasy exist.
         """
-        emails = sorted([email1, email2])
+        hashes = sorted([hash1, hash2])
         try:
-            return Relationship.objects.get(user1__email=emails[0], user2__email=emails[1])
+            return Relationship.objects.get(user1__hash=hashes[0], user2__hash=hashes[1])
         except Relationship.DoesNotExist:
             User = get_user_model()
-            user1 = User.objects.get(email=emails[0])
-            user2 = User.objects.get(email=emails[1])
+            user1 = User.objects.get(hash=hashes[0])
+            user2 = User.objects.get(hash=hashes[1])
             stat1 = RelationshipStats.objects.create()
             stat2 = RelationshipStats.objects.create()
-            Relationship.objects.create(
+            return Relationship.objects.create(
                 user1=user1, user2=user2,
                 user1_stats=stat1, user2_stats=stat2
             )
@@ -82,7 +82,7 @@ class Relationship(models.Model):
         through this function to keep track of the stages. `message` can be
         sent by either person in the relationship.
         """
-        if sent_by == self.user1.email:
+        if sent_by == self.user1.hash:
             my_stats = self.user1_stats
             their_stats = self.user2_stats
         else:

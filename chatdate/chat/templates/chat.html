@@ -12,7 +12,7 @@
 <div id="user_choices">
     {% for user in locals %}
     <div class="potential_chat_user">
-        <h5><a href="" data-hash="{{ user.unique_key }}">{{ user.nickname }}</a></h5>
+        <h5><a href="" data-hash="{{ user.hash }}">{{ user.nickname }}</a></h5>
         <p>{{ user.status }}</p>
     </div>
     {% empty %}
@@ -33,13 +33,11 @@
 </div>
 </div>
 
-
-
 {% load socketio_tags %}
 {% socketio %}
 <script>
 var my_nickname = "{{ user.nickname }}";
-var my_hash = "{{ user.unique_key }}";
+var my_hash = "{{ user.hash }}";
 var short_poll_url = "{% url "still_here" %}";
 </script>
 <script src="{% static "chat.js" %}"></script>
