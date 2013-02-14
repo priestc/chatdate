@@ -1,2 +1,0 @@
-def logout(request):
-    pass

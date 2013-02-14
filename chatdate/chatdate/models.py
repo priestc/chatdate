@@ -52,7 +52,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     def age(self):
         today = datetime.date.today()
         born = self.dob
-        try: 
+        try:
             birthday = born.replace(year=today.year)
         except ValueError: # raised when birth date is February 29 and the current year is not a leap year
             birthday = born.replace(year=today.year, day=born.day-1)
@@ -70,6 +70,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_short_name(self):
         return self.nickname
+
+    def is_authenticated(self):
+        return True
 
     def save(self, *a, **k):
         if not self.hash:
