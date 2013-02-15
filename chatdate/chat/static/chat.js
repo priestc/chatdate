@@ -1,8 +1,26 @@
-setInterval(function() {
+function do_poll() {
     // short poll to let the back end know this user is still available for chat
     // TODO: maybe tie this into the socketio?
-    $.get(short_poll_url);
-}, 30000);
+    $.getJSON(short_poll_url, function(json) {
+        if(json == "OK") {
+            return;
+        }
+
+        $("#online_section .users").remove();
+        
+        for(var i in json) {
+            var item = json[i];
+            var element = $("<div class='users'>");
+            var a = $("<a href='#' data-hash='" + item['hash'] + "'>").text(item['nickname']);
+            element.append(a);
+            $("#online_section").append(element);
+        }
+        console.log("poll");
+    });
+}
+
+do_poll();
+setInterval(do_poll, 30000);
 
 var socket = new io.Socket();
 socket.connect();
@@ -20,14 +38,6 @@ function add_to_chatbox(data) {
     // Add a message coming back from the server to the chatbox.
     // 'data' is the raw payload from socketio.
 
-    var item = $("<li>");
-    if(data.type == 'chat') {
-        var n = data.sent_by.nickname;
-        var line = "<span class='chat-message chat-message-" + n + "'>&lt;" + n + "&gt;</span> " + data.message;
-        item.html(line);
-    } else if (data.type == 'event') {
-        item.html("<span class='chat_event'>" + data.message + "</span>")
-    }
     var chat_hash = data.sent_by.hash;
     if(data.sent_by.hash == my_hash) {
         chat_hash = data.sent_to.hash;
@@ -39,7 +49,18 @@ function add_to_chatbox(data) {
         chat_container = $("#" + chat_hash);
     }
 
-    chat_container.find("ul").append(item);
+    $.each(data.payload, function(key, value) {
+        var li = $("<li>");
+        if(key == 'chat') {
+            var n = data.sent_by.nickname;
+            var line = "<span class='chat-message chat-message-" + n + "'>&lt;" + n + "&gt;</span> " + value;
+            li.html(line);
+        } else if (key == 'event') {
+            li.html("<span class='chat_event'>" + value + "</span>");
+        }
+        chat_container.find("ul").append(li);
+    });
+
     var chatbox = chat_container.find(".chatbox");
     chatbox.scrollTop(chatbox[0].scrollHeight);
 }
@@ -76,8 +97,9 @@ function send_chat_message(to_hash, to_nickname) {
     }
 
     socket.send({
-        type: 'chat',
-        message: message,
+        payload: {
+            chat: message
+        },
         sent_by: {
             nickname: my_nickname,
             hash: my_hash,
@@ -92,7 +114,7 @@ function send_chat_message(to_hash, to_nickname) {
     return false; // to avoid the form from submitting.
 }
 
-$(".potential_chat_user a").click(function() {
+$("#online_section").on('click', 'a', function() {
     // open up a new chat window when you click on a users name.
     var nickname = $(this).text();
     var hash = $(this).attr("data-hash");

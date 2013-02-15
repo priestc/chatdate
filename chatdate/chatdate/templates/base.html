@@ -10,11 +10,17 @@
     </head>
     <body>
         <header>
-            <span class="logo">ChatDate</span> |
-            <a href="#">Profile</a> |
-            <a href="#">Chat</a> |
-            <a href="#">Relationships</a> |
-            <a href="{% url 'logout' %}">Logout</a>
+            <div id="left">
+                <span class="logo">ChatDate</span> |
+                <a href="#" id="profile_link">Profile</a> |
+                <a href="#" id="online_link">Whose Online</a> |
+                <a href="#" id="relationships_link">Relationships</a> |
+                <a href="{% url 'logout' %}">Logout</a>
+            </div>
+            <div id="right">
+                <span class="logo">&nbsp;</span>
+                <span class="nickname">{{ user.nickname }}</span> (<span class="rep">{{ user.reputation }}</span>)
+            </div>
         </header>
         <div id="content">
         {% block content %}{% endblock %}

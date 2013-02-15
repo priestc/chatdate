@@ -44,3 +44,11 @@
 .chatbar input[type=submit] {
     width: 20%;
 }
+
+#relationships_section {
+    display: none;
+}
+
+#preferences_section {
+    display: none;
+}

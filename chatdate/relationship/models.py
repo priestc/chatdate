@@ -12,6 +12,7 @@ def has_kissy(text):
     return ":*" in text or ";-*" in text or ":-*" in text or "<3" in text
 
 RELATIONSHIP_STATUSES = (
+    (0, "You don't exist"),
     (1, 'Contact'),
     (2, 'Acquaintance'),
     (3, 'Friends'),
@@ -121,7 +122,7 @@ class Relationship(models.Model):
         if self.status >= 2 and both_span_detected:
             return 3 # friends
 
-        both_ten_lines = self.user1_stats.total_lines > 10 and self.user2_stats.total_lines > 10
+        both_ten_lines = self.user1_stats.total_lines >= 10 and self.user2_stats.total_lines >= 10
         if self.status >= 1 and both_ten_lines:
             return 2 # acquaintance
 
@@ -140,9 +141,14 @@ class Relationship(models.Model):
         new_status = self.evaluate_status()
         if new_status != self.status:
             self.status = new_status
-            self.increase_rep(new_status=new_status)
+            increased = self.increase_rep(new_status=new_status)
             self.save()
-            both = {'type': 'event', 'new_status': self.get_status_display()}
+            both = {
+                'event': {
+                    'relationship_status': self.get_status_display(),
+                    'rep_increase': increased
+                }
+            }
 
         return sender, sent_to, both
 
@@ -169,3 +175,4 @@ class Relationship(models.Model):
         self.user2.reputation += increase
         self.user1.save()
         self.user2.save()
+        return increase

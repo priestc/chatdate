@@ -9,6 +9,7 @@ header {
     color: white;
     font-size: smaller;
     margin: 0px;
+    overflow: hidden;
 }
 header .logo {
     font-size: xx-large;
@@ -27,4 +28,18 @@ header a:hover {
 #content {
     padding: 10px;
     margin: 3px;
+}
+
+header #left {
+    float: left;
+}
+
+header #right {
+    padding-right: 5px;
+    float: right;
+    text-align: bottom;
+}
+
+.nickname, .rep {
+    font-weight: bold;
 }

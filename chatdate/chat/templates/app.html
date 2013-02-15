@@ -3,21 +3,22 @@
 {% block content %}
 {% load staticfiles %}
 <style>
-.chat-message-{{ user.nickname }} {
-    color: red;
-}
+    .chat-message-{{ user.nickname }} {
+        color: red;
+    }
 </style>
 <link rel="stylesheet" type="text/css" href="{% static 'chat.css' %}">
-<h1 id="chat_title">Chat</h1>
-<div id="user_choices">
-    {% for user in locals %}
-    <div class="potential_chat_user">
-        <h5><a href="" data-hash="{{ user.hash }}">{{ user.nickname }}</a></h5>
-        <p>{{ user.status }}</p>
-    </div>
-    {% empty %}
-    No one to chat with
-    {% endfor %}
+
+<div id="online_section">
+    <h1>Chat</h1>
+</div>
+
+<div id="preferences_section">
+    <h1>Preferences</h1>
+</div>
+
+<div id="relationships_section">
+    <h1>Relationships</h1>
 </div>
 
 <div id="chat_section">
@@ -41,5 +42,5 @@ var my_hash = "{{ user.hash }}";
 var short_poll_url = "{% url "still_here" %}";
 </script>
 <script src="{% static "chat.js" %}"></script>
-
+<script src="{% static "app.js" %}"></script>
 {% endblock %}
