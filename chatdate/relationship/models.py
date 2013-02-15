@@ -146,7 +146,7 @@ class Relationship(models.Model):
             both = {
                 'event': {
                     'relationship_status': self.get_status_display(),
-                    'rep_increase': increased
+                    'rep_increase': increased,
                 }
             }
 

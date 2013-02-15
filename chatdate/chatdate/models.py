@@ -5,6 +5,7 @@ from dateutil import parser
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.contrib.gis.db import models
+from django.contrib.gis.measure import D
 import django.utils.timezone
 
 
@@ -58,6 +59,17 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
         else:
             return today.year - born.year
 
+    def to_json(self):
+        return {
+            'nickname': self.nickname,
+            'age': self.age(),
+            'reputation': self.reputation,
+            'hash': self.hash,
+            'status': self.status,
+            'gender': self.gender,
+            'sexual_preference': self.sexual_preference
+        } 
+
     @property
     def is_staff(self):
         return self.is_superuser
@@ -79,3 +91,15 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
     def __unicode__(self):
         return "%s(%s)" % (self.full_name, self.reputation)
 
+    def local_users(self, online=False):
+        """
+        Return all users within my matching diatance preference.
+        """
+        #return User.objects.all()
+        tup = (self.location, D(mi=900)) #self.connection_distance))
+        # .exclude(location__distance_lt=(self.location, models.F('connection_distance')))
+        nearby = User.objects.filter(location__distance_lt=tup).exclude(id=self.id)
+        if online:
+            return nearby.filter(readytochat__isnull=False)
+        else:
+            return nearby

@@ -1,4 +1,6 @@
 from django_socketio import events, broadcast_channel
+from django_socketio.utils import NoSocket
+from django.contrib.auth import get_user_model
 from .models import ReadyToChat
 from relationship.models import Relationship
 
@@ -25,12 +27,24 @@ def handle_message(request, socket, context, message):
     broadcast_channel(sent_to_package, sent_to)
     broadcast_channel(sent_by_package, sent_by)
 
-    print sent_to_package
-
 @events.on_subscribe(channel="^[a-z0-9]{32}")
 def handle_connect(request, socket, context, channel):
     context['hash'] = channel
-    ReadyToChat.objects.filter(user__hash=channel)
+    User = get_user_model()
+    user = User.objects.get(hash=channel)
+    new_user = {'new_user': user.to_json()}
+    online_and_nearby = []
+    for nearby_user in user.local_users(online=True):
+        # notify all neraby users that you have arrived.
+        try:
+            broadcast_channel(new_user, nearby_user.hash)
+        except NoSocket:
+            pass #ignore users who are not online
+        online_and_nearby.append(nearby_user.to_json())
+
+    broadcast_channel({'online_and_nearby': online_and_nearby}, channel) 
+    ReadyToChat.objects.set_ready(channel)
+
 
 @events.on_finish(channel="^[a-z0-9]{32}")
 def handle_disconnect(request, socket, context):
@@ -39,3 +53,12 @@ def handle_disconnect(request, socket, context):
     """
     hash = context['hash']
     ReadyToChat.objects.filter(user__hash=hash).delete()
+    User = get_user_model()
+    user = User.objects.get(hash=hash)
+    remove_user = {'remove_user': user.to_json()}
+    for nearby_user in user.local_users(online=True):
+        # notify all neraby users that you have left
+        try:
+            broadcast_channel(remove_user, nearby_user.hash)
+        except NoSocket:
+            pass #ignore users who are not online

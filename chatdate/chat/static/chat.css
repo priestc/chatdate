@@ -1,6 +1,16 @@
+/* Any event, usually resulting in rep increase */
 .chat_event {
-    color: blue;
     font-weight: bold;
+}
+
+/* disconnect or reconnect event in the chatbox */
+.connection_event {
+    color: purple;
+}
+
+.rep_added {
+    font-weight: bold;
+    color: green;
 }
 
 /* contains all chat containers */ 

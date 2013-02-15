@@ -15,15 +15,16 @@ class ReadyManager(models.Manager):
         online = self.filter(last_seen__gt=five_minutes)
         return User.objects.filter(readytochat__in=online).exclude(email=user.email)
 
-    def set_ready(self, user):
+    def set_ready(self, hash):
         """
         Update the value for last_seen for this user.
         """
         try:
-            u = self.get(user=user)
+            u = self.get(user__hash=hash)
             u.save()
         except ReadyToChat.DoesNotExist:
-            self.create(user=user)
+            User = get_user_model()
+            self.create(user=User.objects.get(hash=hash))
 
 class ReadyToChat(models.Model):
     """
