@@ -1,4 +1,4 @@
-$("#preferences_link").click(function() {
+$("#profile_link").click(function() {
     $("#relationships_section").hide();
     $("#profile_section").show();
     $("#online_section").hide();

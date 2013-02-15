@@ -26,3 +26,16 @@ def handle_message(request, socket, context, message):
     broadcast_channel(sent_by_package, sent_by)
 
     print sent_to_package
+
+@events.on_subscribe(channel="^[a-z0-9]{32}")
+def handle_connect(request, socket, context, channel):
+    context['hash'] = channel
+    ReadyToChat.objects.filter(user__hash=channel)
+
+@events.on_finish(channel="^[a-z0-9]{32}")
+def handle_disconnect(request, socket, context):
+    """
+    When a user disconnects from the site, this event is fired.
+    """
+    hash = context['hash']
+    ReadyToChat.objects.filter(user__hash=hash).delete()

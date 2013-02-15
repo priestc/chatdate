@@ -45,10 +45,16 @@
     width: 20%;
 }
 
-#relationships_section {
-    display: none;
+.users {
+    width: 200px;
+    height: 50px;
+    padding: 3px;
+    margin: 5px;
+    background: #dfdfdf;
+    border: 1px solid gray;
+    float: left;
 }
 
-#preferences_section {
+#user_template {
     display: none;
 }

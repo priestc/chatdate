@@ -8,14 +8,12 @@ function do_poll() {
 
         $("#online_section .users").remove();
         
-        for(var i in json) {
-            var item = json[i];
-            var element = $("<div class='users'>");
-            var a = $("<a href='#' data-hash='" + item['hash'] + "'>").text(item['nickname']);
-            element.append(a);
-            $("#online_section").append(element);
-        }
-        console.log("poll");
+        $.each(json, function(user) {
+            var template = $("#user_template").text();
+            var dom = Mustache.render(template, user);
+            console.log(dom);
+            $("#online_section").append($(dom));
+        });
     });
 }
 

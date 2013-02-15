@@ -43,3 +43,15 @@ header #right {
 .nickname, .rep {
     font-weight: bold;
 }
+
+#relationships_section {
+    display: none;
+}
+
+#profile_section {
+    display: none;
+}
+
+#online_section {
+    overflow: hidden;
+}

@@ -4,13 +4,13 @@ from dateutil import parser
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
-from django.db import models
+from django.contrib.gis.db import models
 import django.utils.timezone
 
 
 SEXUAL_PEFERENCES = ((1, 'heterosexual'), (2, 'homosexual'), (3, 'bisexual'))
 
-class UserManager(BaseUserManager):
+class UserManager(models.GeoManager, BaseUserManager):
     def create_user(self, email, dob, nickname, full_name, password=None):
         dob = parser.parse(dob)
         u = self.create(email=email, dob=dob, nickname=nickname, full_name=full_name)
@@ -25,24 +25,21 @@ class UserManager(BaseUserManager):
         return u
 
 
-class User(AbstractBaseUser, PermissionsMixin):
+class User(AbstractBaseUser, PermissionsMixin, models.Model):
     gender = models.CharField(max_length=1, choices=(('M', "Male"), ("F", "Female")), default='M')
     transgendered = models.BooleanField(default=False)
     sexual_preference = models.IntegerField(choices=SEXUAL_PEFERENCES, default=1)
-
     nickname = models.CharField(max_length=25)
     full_name = models.TextField()
     email = models.EmailField(db_index=True, unique=True)
     zipcode = models.CharField(max_length=5)
     specific_location = models.CharField(max_length=50, blank=True)
-
     relationships = models.ManyToManyField('self', through="relationship.Relationship", symmetrical=False)
-
     dob = models.DateField("Date of Birth")
     status = models.CharField(max_length=140)
     reputation = models.IntegerField(default=0)
-
     hash = models.CharField(max_length=32, db_index=True)
+    location = models.PointField()
 
     objects = UserManager()
 

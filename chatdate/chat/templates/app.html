@@ -10,10 +10,16 @@
 <link rel="stylesheet" type="text/css" href="{% static 'chat.css' %}">
 
 <div id="online_section">
-    <h1>Chat</h1>
+    <h1>Who's Online</h1>
+    <script type="text/template" id="user_template">
+        <div class="users">
+            <a class="username">{{ username }}</a><br>
+            <span class="age">{{ age }}</span>
+        </span>
+    </script>
 </div>
 
-<div id="preferences_section">
+<div id="profile_section">
     <h1>Preferences</h1>
 </div>
 
