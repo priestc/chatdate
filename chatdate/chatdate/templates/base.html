@@ -23,7 +23,9 @@
             </div>
             <div id="right">
                 <span class="logo">&nbsp;</span>
+                {% if user.is_authenticated %}
                 <span class="nickname">{{ user.nickname }}</span> (<span class="rep">{{ user.reputation }}</span>)
+                {% endif %}
             </div>
         </header>
         <div id="content">

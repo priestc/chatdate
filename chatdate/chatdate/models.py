@@ -32,14 +32,13 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
     nickname = models.CharField(max_length=25)
     full_name = models.TextField()
     email = models.EmailField(db_index=True, unique=True)
-    zipcode = models.CharField(max_length=5)
-    specific_location = models.CharField(max_length=50, blank=True)
     relationships = models.ManyToManyField('self', through="relationship.Relationship", symmetrical=False)
     dob = models.DateField("Date of Birth")
     status = models.CharField(max_length=140)
     reputation = models.IntegerField(default=0)
     hash = models.CharField(max_length=32, db_index=True)
     location = models.PointField()
+    specific_location = models.CharField("Location Description", max_length=50, blank=True)
 
     objects = UserManager()
 
