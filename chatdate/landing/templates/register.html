@@ -6,6 +6,7 @@
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBTQBbE5JzMZQIRb_RO6EwfnK_T5BvurNo&sensor=false"></script>
 <form method="post">
     {% csrf_token %}
+    {{ form.errors }}
     <table>
         <tr>
             <th>{{ form.nickname.label_tag }}</th>
@@ -18,6 +19,10 @@
         <tr>
             <th>{{ form.password.label_tag }}</th>
             <td>{{ form.password }}</td>
+        </tr>
+        <tr>
+            <th>{{ form.dob.label_tag }}</th>
+            <td>{{ form.dob }} {{ form.dob.help_text }}</td>
         </tr>
         <tr>
             <th>{{ form.password_again.label_tag }}</th>
@@ -48,6 +53,12 @@
     <input type="submit">
 </form>
 <script type="text/javascript">
+    function fill_in_wkt() {
+        var loc = marker.getPosition();
+        var wkt = "POINT(" + loc.lat() + ' ' + loc.lng() + ")";
+        $("#id_location").val(wkt);
+        console.log(wkt);
+    }
     function place_marker(pos) {
         var latlng = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude)
         marker = new google.maps.Marker({
@@ -59,11 +70,9 @@
         google.maps.event.addListener(marker, 'dragend', function () {
             // when the marker is dragged around, update the form with
             // the markers new location
-            var loc = marker.getPosition();
-            var wkt = "POINT(" + loc.lat() + ' ' + loc.lng() + ")";
-            $("#id_location").val(wkt);
-            console.log(wkt);
+            fill_in_wkt();
         });
+        fill_in_wkt()
         map.setCenter(latlng);
         console.log(pos.coords.latitude, pos.coords.longitude); 
     }

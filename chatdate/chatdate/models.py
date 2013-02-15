@@ -39,6 +39,7 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
     hash = models.CharField(max_length=32, db_index=True)
     location = models.PointField()
     specific_location = models.CharField("Location Description", max_length=50, blank=True)
+    connection_distance = models.IntegerField(default=15)
 
     objects = UserManager()
 
