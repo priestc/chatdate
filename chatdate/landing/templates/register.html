@@ -1,57 +1,105 @@
 {% extends "base.html" %}
 
+{% block extrahead %}
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'register.css' %}">
+{% endblock %}
+
 {% block content %}
 
-<h1>Register New Account</h1>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBTQBbE5JzMZQIRb_RO6EwfnK_T5BvurNo&sensor=false"></script>
-<form method="post">
-    {% csrf_token %}
-    {{ form.errors }}
-    <table>
-        <tr>
-            <th>{{ form.nickname.label_tag }}</th>
-            <td>{{ form.nickname }}</td>
-        </tr>
-        <tr>
-            <th>{{ form.email.label_tag }}</th>
-            <td>{{ form.email }}</td>
-        </tr>
-        <tr>
-            <th>{{ form.password.label_tag }}</th>
-            <td>{{ form.password }}</td>
-        </tr>
-        <tr>
-            <th>{{ form.dob.label_tag }}</th>
-            <td>{{ form.dob }} {{ form.dob.help_text }}</td>
-        </tr>
-        <tr>
-            <th>{{ form.password_again.label_tag }}</th>
-            <td>{{ form.password_again }}</td>
-        </tr>
-        <tr>
-            <th>{{ form.full_name.label_tag }}</th>
-            <td>{{ form.full_name }}</td>
-        </tr>
-        <tr>
-            <th>{{ form.gender.label_tag }}</th>
-            <td>{{ form.gender }} {{ form.transgendered.label_tag }}? {{ form.transgendered }}</td>
-        </tr>
-        <tr>
-            <th>{{ form.sexual_preference.label_tag }}</th>
-            <td>{{ form.sexual_preference }}</td>
-        </tr>
-        <tr>
-            <th>{{ form.location.label_tag }}</th>
-            <td><div id="map_canvas" style="width: 300px; height: 300px"></div></td>
-        </tr>
-        <tr>
-            <th>{{ form.specific_location.label_tag }}</th>
-            <td>{{ form.specific_location }}</td>
-        </tr>
-    </table>
-    {{ form.location }}
-    <input type="submit">
-</form>
+
+<div id="center_content">
+    <h1>Register New Account</h1>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBTQBbE5JzMZQIRb_RO6EwfnK_T5BvurNo&sensor=false"></script>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.errors }}
+        <table>
+            <tr>
+                <th>{{ form.nickname.label_tag }}</th>
+                <td>{{ form.nickname }}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="help">{{ form.nickname.help_text }}</td>
+            </tr>
+            <tr>
+                <th>{{ form.email.label_tag }}</th>
+                <td>{{ form.email }}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="help">{{ form.email.help_text }}</td>
+            </tr>
+            <tr>
+                <th>{{ form.password.label_tag }}</th>
+                <td>{{ form.password }}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="help">{{ form.password.help_text }}</td>
+            </tr>
+            <tr>
+                <th>{{ form.dob.label_tag }}</th>
+                <td>{{ form.dob }}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="help">{{ form.dob.help_text }}</td>
+            </tr>
+            <tr>
+                <th>{{ form.password_again.label_tag }}</th>
+                <td>{{ form.password_again }}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="help">{{ form.nickname.help_text }}</td>
+            </tr>
+            <tr>
+                <th>{{ form.full_name.label_tag }}</th>
+                <td>{{ form.full_name }}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="help">{{ form.full_name.help_text }}</td>
+            </tr>
+            <tr>
+                <th>{{ form.gender.label_tag }}</th>
+                <td>{{ form.gender }} {{ form.transgendered.label_tag }}? {{ form.transgendered }}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="help">{{ form.gender.help_text }}</td>
+            </tr>
+            <tr>
+                <th>{{ form.sexual_preference.label_tag }}</th>
+                <td>{{ form.sexual_preference }}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="help">{{ form.sexual_preference.help_text }}</td>
+            </tr>
+            <tr>
+                <th>{{ form.location.label_tag }}</th>
+                <td><div id="map_canvas" style="width: 300px; height: 300px"></div></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="help">{{ form.location.help_text }}</td>
+            </tr>
+            <tr>
+                <th>{{ form.specific_location.label_tag }}</th>
+                <td>{{ form.specific_location }}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="help">{{ form.specific_location.help_text }}</td>
+            </tr>
+        </table>
+        {{ form.location }}
+        <input type="submit">
+    </form>
+</div>
 <script type="text/javascript">
     function fill_in_wkt() {
         var loc = marker.getPosition();

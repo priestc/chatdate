@@ -17,6 +17,14 @@ header .logo {
     padding-top: 3px;
 }
 
+.logo-red {
+    color: #FF0000;
+}
+
+.logo-pink {
+    color: #FFCCFF;
+}
+
 header a {
     color: white;
     text-decoration: none;
@@ -47,6 +55,20 @@ header #right {
 
 #relationships_section {
     display: none;
+    overflow: hidden;
+}
+
+#relationship_template {
+    display: none;
+}
+
+.relationship {
+    width: 400px;
+    height: 150px;
+    border: 1px solid red;
+    margin: 5px;
+    padding: 3px;
+    float: left;
 }
 
 #profile_section {

@@ -9,6 +9,7 @@ $("#relationships_link").click(function() {
     $("#relationships_section").show();
     $("#profile_section").hide();
     $("#online_section").hide();
+    update_relationships();
     return false;
 });
 
@@ -23,14 +24,16 @@ function add_relationship(data) {
     var r = $("#relationship_template").clone();
     r.attr('id', data.id);
     r.find(".name").text(data.name);
+    r.addClass('relationship');
     r.find(".status").text(data.status);
-    $("#relationship_section").append(r);
+    $("#relationships_section").append(r);
 }
 
 function update_relationships() {
-    $.getJSON(relationship_url, function(relationships) {
+    $.getJSON(relationships_url, function(relationships) {
+        console.log("DDDD", relationships);
         $(".relationship").remove();
-        $.each(relationships, function(relationship) {
+        $.each(relationships, function(i, relationship) {
             add_relationship(relationship);
         });
     });

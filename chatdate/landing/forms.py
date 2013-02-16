@@ -9,7 +9,9 @@ class RegisterForm(forms.ModelForm):
         widgets = {
             'password': forms.PasswordInput,
             'full_name': forms.TextInput,
-            'location': forms.HiddenInput}
+            'location': forms.HiddenInput,
+            'sexual_preference': forms.RadioSelect,
+            'gender': forms.RadioSelect}
         model = User
         exclude = ['user_permissions', 'groups', 'is_superuser', 'hash',
                    'last_login', 'relationships', 'status', 'reputation']

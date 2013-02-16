@@ -6,7 +6,7 @@ from django.db import models
 import django.utils.timezone
 
 def has_laugh(text):
-    return "hehe" in text or "haha" in text
+    return "hehe" in text or "haha" in text or "lol" in text
 
 def has_kissy(text):
     return ":*" in text or ";-*" in text or ":-*" in text or "<3" in text

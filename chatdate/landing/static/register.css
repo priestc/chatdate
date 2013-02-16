@@ -1,0 +1,22 @@
+#center_content {
+    min-width: 400px;
+    width: 50%;
+    margin: 0 auto 0 auto;
+    text-align: center;
+    border: 1px solid black;
+}
+table {
+    margin: 0 auto 0 auto;
+}
+th {
+    text-align: right;
+}
+td {
+    text-align: left;
+}
+input[type=text], input[type=password] {
+    width: 100%
+}
+.help {
+    font-size: x-small;
+}
