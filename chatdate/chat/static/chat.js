@@ -6,6 +6,15 @@ function make_new_online_user(user) {
     if($("#selection_" + user.hash).length > 0) {
         return; // avoid creating duplicates
     }
+    if($("#chat_" + user.hash).length >= 1) {
+        // show "disconnected" in the chat box
+        add_to_chatbox({
+            sent_to: {hash: my_hash},
+            sent_by: {hash: user.hash},
+            payload: {'connection': "Reconnected"}
+        });
+        $("#chat_" + user.hash).removeClass("disabled");
+    }
     new_user = $("#user_template").clone();
     new_user.find(".nickname").text(user.nickname);
     new_user.attr('id', "selection_" + user.hash);

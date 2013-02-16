@@ -41,6 +41,7 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
     location = models.PointField()
     specific_location = models.CharField("Location Description", max_length=50, blank=True)
     connection_distance = models.IntegerField(default=15)
+    karma_threshold = models.IntegerField(default=0)
 
     objects = UserManager()
 
