@@ -4,7 +4,7 @@
 {% load staticfiles %}
 <style>
     .chat-message-{{ user.nickname }} {
-        color: red;
+        font-weight: bold;
     }
 </style>
 <link rel="stylesheet" type="text/css" href="{% static 'chat.css' %}">
@@ -13,6 +13,8 @@
     <h1>Who's Online</h1>
     <div class="users" id="user_template">
         <a href="#" class="nickname"></a>
+        (<span class="rep"></span>)
+        <span class="status"></span>
         <br>
         <span class="age"></span>
     </div>
@@ -24,6 +26,11 @@
 
 <div id="relationships_section">
     <h1>Relationships</h1>
+    <div id="relationship_template" class="relationship">
+        <a href="" class="name"></a>
+        <br>
+        <span class="status"></span>
+    </div>
 </div>
 
 <div id="chat_section">
@@ -44,7 +51,8 @@
 <script>
 var my_nickname = "{{ user.nickname }}";
 var my_hash = "{{ user.hash }}";
-var short_poll_url = "{% url "still_here" %}";
+var karma_url = "{% url "karma" %}";
+var relationships_url = "{% url "relationships" %}";
 </script>
 <script src="{% static "chat.js" %}"></script>
 <script src="{% static "app.js" %}"></script>

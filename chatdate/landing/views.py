@@ -1,6 +1,7 @@
 from django.template.response import TemplateResponse
 from django.http import HttpResponseRedirect
 from django.contrib.auth import login, authenticate
+from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.contrib.auth import logout as dj_logout
 
@@ -12,8 +13,11 @@ def landingpage(request):
 
     if request.POST:
         user = authenticate(username=request.POST['email'], password=request.POST['password'])
-        login(request, user)
-        return HttpResponseRedirect('/')
+        if user:
+            login(request, user)
+            return HttpResponseRedirect('/')
+        else:
+            messages.error(request, 'Invalid Login')
     
     return TemplateResponse(request, 'landingpage.html', {})
 

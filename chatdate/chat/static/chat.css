@@ -1,11 +1,16 @@
 /* Any event, usually resulting in rep increase */
 .chat_event {
-    font-weight: bold;
+    color: blue
 }
 
 /* disconnect or reconnect event in the chatbox */
 .connection_event {
     color: purple;
+    font-weight: bold;
+}
+
+.chat_timestamp {
+    color: #999999;
 }
 
 .rep_added {
@@ -21,10 +26,16 @@
 
 /* contains a chatbox, chat title, and chat bar */
 .chat_container {
+    padding: 2px;
     float: left;
     height: 400px;
     width: 300px;
     margin: 5px;
+    font-size: small;
+}
+
+.chat_container h2 {
+    margin-bottom: 3px;
 }
 
 #chat_template {
@@ -33,6 +44,7 @@
 
 /* container with chat messages inside */
 .chatbox {
+    border: 1px solid #555555;
     height: 200px;
     background: #DFDFDF;
     overflow: scroll;
@@ -44,25 +56,41 @@
     padding-left: 3px;
 }
 
+.chatbar {
+    padding-top: 2px;
+}
+
 /* the bar you type chats into */
 .chatbar input[type=text] {
-    width: 75%;
-    margin: 3px;
+    width: 77%;
+    float: left;
 }
 
 /* The send button */
 .chatbar input[type=submit] {
     width: 20%;
+    float: right;
 }
 
 .users {
-    width: 200px;
+    width: 300px;
     height: 50px;
     padding: 3px;
     margin: 5px;
-    background: #dfdfdf;
     border: 1px solid gray;
     float: left;
+}
+
+.age {
+    font-style: italic;
+}
+
+.female {
+    background: #FFCCFF;
+}
+
+.male {
+    background: #A3E0FF;
 }
 
 #user_template {

@@ -1,5 +1,7 @@
 function update_rep(new_value) {
-    $(".rep").text(new_value);
+    $.getJSON(karma_url, function(data) {
+        $(".my_rep").text(data);
+    });
 }
 
 function make_new_online_user(user) {
@@ -7,7 +9,8 @@ function make_new_online_user(user) {
         return; // avoid creating duplicates
     }
     if($("#chat_" + user.hash).length >= 1) {
-        // show "disconnected" in the chat box
+        // show "Re-connected" in the chat box, but only if their window is
+        // already open
         add_to_chatbox({
             sent_to: {hash: my_hash},
             sent_by: {hash: user.hash},
@@ -18,6 +21,15 @@ function make_new_online_user(user) {
     new_user = $("#user_template").clone();
     new_user.find(".nickname").text(user.nickname);
     new_user.attr('id', "selection_" + user.hash);
+    new_user.find(".status").text(user.status);
+    new_user.find(".age").text("Age: " + user.age);
+    new_user.find(".rep").text(user.reputation);
+
+    if(user.gender == 'F') {
+        new_user.addClass('female');
+    } else {
+        new_user.addClass('male');
+    }
     $("#online_section").append(new_user);
 }
 
@@ -31,8 +43,6 @@ function remove_online_user(user) {
             payload: {'connection': "Disconnected"}
         });
         $("#chat_" + user.hash).addClass("disabled");
-    } else {
-        console.log("no disconnected message because no window");
     }
 }
 
@@ -102,6 +112,8 @@ function add_to_chatbox(data) {
             // disconnect or reconnect event
             li.html("<span class='connection_event'>" + value + "</span>");
         }
+        var timestamp = (new Date()).toLocaleTimeString();
+        li.html("<span class='chat_timestamp'>" + timestamp + "</span> " + li.html());
         chat_container.find("ul").append(li);
     });
 

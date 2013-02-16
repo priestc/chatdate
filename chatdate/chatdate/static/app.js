@@ -18,3 +18,20 @@ $("#online_link").click(function() {
     $("#online_section").show();
     return false;
 });
+
+function add_relationship(data) {
+    var r = $("#relationship_template").clone();
+    r.attr('id', data.id);
+    r.find(".name").text(data.name);
+    r.find(".status").text(data.status);
+    $("#relationship_section").append(r);
+}
+
+function update_relationships() {
+    $.getJSON(relationship_url, function(relationships) {
+        $(".relationship").remove();
+        $.each(relationships, function(relationship) {
+            add_relationship(relationship);
+        });
+    });
+}

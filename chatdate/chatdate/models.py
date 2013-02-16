@@ -8,8 +8,11 @@ from django.contrib.gis.db import models
 from django.contrib.gis.measure import D
 import django.utils.timezone
 
-
 SEXUAL_PEFERENCES = ((1, 'heterosexual'), (2, 'homosexual'), (3, 'bisexual'))
+
+class Picture(models.Model):
+    caption = models.CharField(max_length=256)
+    url = models.URLField()
 
 class UserManager(models.GeoManager, BaseUserManager):
     def create_user(self, email, dob, nickname, full_name, password=None):
@@ -42,6 +45,7 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
     specific_location = models.CharField("Location Description", max_length=50, blank=True)
     connection_distance = models.IntegerField(default=15)
     karma_threshold = models.IntegerField(default=0)
+    pics = models.ManyToManyField(Picture)
 
     objects = UserManager()
 

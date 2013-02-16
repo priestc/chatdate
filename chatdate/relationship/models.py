@@ -23,15 +23,17 @@ class RelationshipStats(models.Model):
     """
     Represents stats for a user in a relationship.
     `span_detected` gets flipped to True after a mesage has been sent more than
-    24 hours apart.
+    24 hours apart. These represent the things Ive done in the relatinship.
     """
-    long_distance_partner = models.BooleanField(default=False)
-    high_karma_partner = models.BooleanField(default=False)
-    laugh_lines = models.IntegerField(default=0)
-    like = models.BooleanField(default=False)
-    kissy_lines = models.IntegerField(default=0)
-    total_lines = models.IntegerField(default=0)
-    span_detected = models.BooleanField(default=False)
+    im_a_long_distance_partner = models.BooleanField(default=False)
+    im_a_high_karma_partner = models.BooleanField(default=False)
+    my_laugh_lines = models.IntegerField(default=0)
+    i_like_her = models.BooleanField(default=False)
+    my_kissy_lines = models.IntegerField(default=0)
+    my_total_lines = models.IntegerField(default=0)
+    my_span_detected = models.BooleanField(default=False)
+    i_gave_away_rl_name = models.BooleanField()
+    i_gave_away_pictures = models.BooleanField()
 
 
 class RelationshipManager(models.Manager):
@@ -77,6 +79,36 @@ class Relationship(models.Model):
     def __unicode__(self):
         return "%s + %s (%s)" % (self.user1.nickname, self.user2.nickname, self.get_status_display())
 
+    def to_json(self, perspective):
+        """
+        Return a json serializable object that represents the relationship
+        from the passed in user's perspective.
+        """
+        perspective_stats = self.user2_stats
+        other_stats = self.user1_stats
+        other_person = self.user1
+        if perspective == self.user1:
+            perspective_stats = self.user1_stats
+            other_stats = self.user2_stats
+            other_person = self.user2
+
+        if other_stats.i_gave_away_rl_name:
+            name = other_person.full_name
+        else:
+            name = other_person.nickname
+
+        ret = {
+            'id': self.pk,
+            'start_date': self.start_date.strftime("%B %d, %Y"),
+            'status': self.get_status_display(),
+            'met': self.met,
+            'name': name,
+            'gender': other_person.gender,
+            'pictures': other_person.pics if other_stats.i_gave_away_pictures else []
+        }
+
+        return ret
+
     def process_message(self, text, sent_by):
         """
         When two people in a relationship speak to each other, the text goes
@@ -90,7 +122,7 @@ class Relationship(models.Model):
             my_stats = self.user2_stats
             their_stats = self.user1_stats
 
-        my_stats.total_lines += 1
+        my_stats.my_total_lines += 1
 
         if has_laugh(text):
             their_stats.laugh_lines += 1
@@ -114,19 +146,19 @@ class Relationship(models.Model):
         if self.status >= 4 and self.have_met:
             return 5 # irl friends
 
-        both_like = self.user1_stats.like and self.user2_stats.like
-        if self.status >= 3 and both_line:
+        both_like = self.user1_stats.i_like_her and self.user2_stats.i_like_her
+        if self.status >= 3 and both_like:
             return 4 # more than friends
 
-        both_span_detected = self.user1_stats.span_detected and self.user2_stats.span_detected
+        both_span_detected = self.user1_stats.my_span_detected and self.user2_stats.my_span_detected
         if self.status >= 2 and both_span_detected:
             return 3 # friends
 
-        both_ten_lines = self.user1_stats.total_lines >= 10 and self.user2_stats.total_lines >= 10
+        both_ten_lines = self.user1_stats.my_total_lines >= 10 and self.user2_stats.my_total_lines >= 10
         if self.status >= 1 and both_ten_lines:
             return 2 # acquaintance
 
-        if self.user1_stats.total_lines >= 1 and self.user2_stats.total_lines >= 1:
+        if self.user1_stats.my_total_lines >= 1 and self.user2_stats.my_total_lines >= 1:
             return 1 # contact
         
         return 0
