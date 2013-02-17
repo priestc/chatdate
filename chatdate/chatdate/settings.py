@@ -147,3 +147,5 @@ AUTH_USER_MODEL = 'chatdate.User'
 LOGIN_URL="/"
 USE_TZ = True
 SPATIALITE_LIBRARY_PATH='/usr/local/Cellar/sqlite/3.7.15.1/lib/libsqlite3.0.8.6.dylib'
+
+from local_settings import *
