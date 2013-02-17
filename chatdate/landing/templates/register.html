@@ -23,6 +23,7 @@
                 <td></td>
                 <td class="help">{{ form.nickname.help_text }}</td>
             </tr>
+
             <tr>
                 <th>{{ form.email.label_tag }}</th>
                 <td>{{ form.email }}</td>
@@ -31,6 +32,7 @@
                 <td></td>
                 <td class="help">{{ form.email.help_text }}</td>
             </tr>
+
             <tr>
                 <th>{{ form.password.label_tag }}</th>
                 <td>{{ form.password }}</td>
@@ -39,6 +41,16 @@
                 <td></td>
                 <td class="help">{{ form.password.help_text }}</td>
             </tr>
+     
+            <tr>
+                <th>{{ form.password_again.label_tag }}</th>
+                <td>{{ form.password_again }}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="help">{{ form.password_again.help_text }}</td>
+            </tr>
+
             <tr>
                 <th>{{ form.dob.label_tag }}</th>
                 <td>{{ form.dob }}</td>
@@ -47,14 +59,7 @@
                 <td></td>
                 <td class="help">{{ form.dob.help_text }}</td>
             </tr>
-            <tr>
-                <th>{{ form.password_again.label_tag }}</th>
-                <td>{{ form.password_again }}</td>
-            </tr>
-            <tr>
-                <td></td>
-                <td class="help">{{ form.nickname.help_text }}</td>
-            </tr>
+
             <tr>
                 <th>{{ form.full_name.label_tag }}</th>
                 <td>{{ form.full_name }}</td>
@@ -63,14 +68,25 @@
                 <td></td>
                 <td class="help">{{ form.full_name.help_text }}</td>
             </tr>
+
             <tr>
                 <th>{{ form.gender.label_tag }}</th>
-                <td>{{ form.gender }} {{ form.transgendered.label_tag }}? {{ form.transgendered }}</td>
+                <td>{{ form.gender }}</td>
             </tr>
             <tr>
                 <td></td>
                 <td class="help">{{ form.gender.help_text }}</td>
             </tr>
+
+            <tr>
+                <th>{{ form.transgendered.label_tag }}</th>
+                <td>{{ form.transgendered }}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="help">{{ form.transgendered.help_text }}</td>
+            </tr>
+
             <tr>
                 <th>{{ form.sexual_preference.label_tag }}</th>
                 <td>{{ form.sexual_preference }}</td>
@@ -79,14 +95,16 @@
                 <td></td>
                 <td class="help">{{ form.sexual_preference.help_text }}</td>
             </tr>
+
             <tr>
                 <th>{{ form.location.label_tag }}</th>
-                <td><div id="map_canvas" style="width: 300px; height: 300px"></div></td>
+                <td><div id="map_canvas"></div></td>
             </tr>
             <tr>
                 <td></td>
                 <td class="help">{{ form.location.help_text }}</td>
             </tr>
+
             <tr>
                 <th>{{ form.specific_location.label_tag }}</th>
                 <td>{{ form.specific_location }}</td>
