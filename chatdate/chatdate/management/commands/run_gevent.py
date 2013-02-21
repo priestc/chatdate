@@ -25,9 +25,6 @@ def reload_watcher():
 class Command(BaseCommand):
 
     def handle(self, addrport="", *args, **options):
-
-        from chat import events
-
         if not addrport:
             self.addr = ''
             self.port = 9000
@@ -73,7 +70,7 @@ class Command(BaseCommand):
             return handler
         use_static_handler = options.get('use_static_handler', True)
         insecure_serving = options.get('insecure_serving', False)
-        if (settings.DEBUG and use_static_handler or
+        if (use_static_handler or
                 (use_static_handler and insecure_serving)):
             handler = StaticFilesHandler(handler)
         return handler

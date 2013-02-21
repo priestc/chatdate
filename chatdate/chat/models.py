@@ -37,3 +37,5 @@ class ReadyToChat(models.Model):
     def __unicode__(self):
         ago = (django.utils.timezone.now() - self.last_seen)
         return "%s - %s" % (self.user.email, ago)
+
+import events
