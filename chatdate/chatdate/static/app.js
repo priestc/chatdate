@@ -31,7 +31,6 @@ function add_relationship(data) {
 
 function update_relationships() {
     $.getJSON(relationships_url, function(relationships) {
-        console.log("DDDD", relationships);
         $(".relationship").remove();
         $.each(relationships, function(i, relationship) {
             add_relationship(relationship);

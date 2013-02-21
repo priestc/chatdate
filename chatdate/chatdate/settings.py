@@ -1,8 +1,5 @@
 # Django settings for chatdate project.
 
-DEBUG = True
-TEMPLATE_DEBUG = DEBUG
-
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
@@ -111,7 +108,6 @@ INSTALLED_APPS = (
     'relationship',
     'chat',
     'chatdate',
-    'django_socketio',
 )
 
 # A sample logging configuration. The only tangible logging

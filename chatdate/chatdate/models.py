@@ -41,7 +41,7 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
     status = models.CharField(max_length=140)
     reputation = models.IntegerField(default=0)
     hash = models.CharField(max_length=32, db_index=True)
-    location = models.PointField(help_text="You specific coordinates will never be shown to anyone")
+    location = models.PointField(help_text="Click and drag the marker to where you are located. Your exact coordinates will never be revealed to anyone.")
     specific_location = models.CharField("Location Description", help_text="You can be as spefific or vague as you wish. Example: Chelsea, Kentucky, South Miami.", max_length=50, blank=True)
     connection_distance = models.IntegerField(default=15)
     karma_threshold = models.IntegerField(default=0)

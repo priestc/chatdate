@@ -3,20 +3,24 @@
     width: 50%;
     margin: 0 auto 0 auto;
     text-align: center;
-    border: 1px solid black;
 }
+
 table {
     margin: 0 auto 0 auto;
 }
+
 th {
     text-align: right;
 }
+
 td {
     text-align: left;
 }
+
 input[type="text"], input[type="password"] {
     width: 20em;
 }
+
 .help {
     font-size: x-small;
     height: 30px;

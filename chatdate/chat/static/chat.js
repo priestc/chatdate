@@ -46,35 +46,6 @@ function remove_online_user(user) {
     }
 }
 
-var socket = new io.Socket();
-socket.connect();
-socket.on('connect', function() {
-    // through this channel I will send and recieve all chat messages.
-    // and maybe possibly other things.
-    socket.subscribe(my_hash);
-});
-socket.on('message', function(data) {
-    //console.log("got message: ", data);
-    if(data.new_user) {
-        console.log("new user: ", data.new_user);
-        make_new_online_user(data.new_user);
-    } else if(data.remove_user) {
-        console.log("remove user: ", data.remove_user);
-        remove_online_user(data.remove_user);
-    } else if (data.online_and_nearby) {
-        console.log("all users: ", data.online_and_nearby);
-        $.each(data.online_and_nearby, function(i, user) {
-            make_new_online_user(user);
-        });
-    } else {
-        add_to_chatbox(data);
-    }
-});
-
-$(window).bind("beforeunload", function() { 
-    socket.disconnect();
-});
-
 function add_to_chatbox(data) {
     // Add a message coming back from the server to the chatbox.
     // 'data' is the raw payload from socketio. The chat message can either
@@ -126,7 +97,7 @@ function make_new_chat(hash, nickname) {
 
     $("#chat_section").show();
 
-    var chat_element = $("#chat_" + channel);
+    var chat_element = $("#chat_" + hash);
     if(chat_element.length) {
         chat_element.show();
     } else {
@@ -165,7 +136,7 @@ function send_chat_message(to_hash, to_nickname) {
             hash: to_hash,
         }
     }
-    socket.send(msg);
+    socket.emit("message", msg);
 
     textbox.val(""); // clear the chat bar after submitting.
     return false; // to avoid the form from submitting.
