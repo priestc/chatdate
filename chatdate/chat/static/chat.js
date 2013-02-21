@@ -1,4 +1,4 @@
-function update_rep(new_value) {
+function update_rep() {
     $.getJSON(karma_url, function(data) {
         $(".my_rep").text(data);
     });

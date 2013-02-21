@@ -8,6 +8,9 @@ from socketio.namespace import BaseNamespace
 from socketio.mixins import RoomsMixin, BroadcastMixin
 from socketio.sdjango import namespace
 
+class UserNotConnected(Exception):
+    pass
+
 @namespace('/chat')
 class ChatNamespace(BaseNamespace, BroadcastMixin):
     nicknames = []
@@ -25,7 +28,7 @@ class ChatNamespace(BaseNamespace, BroadcastMixin):
             if socket.session['hash'] == user_hash:
                 return socket.send_packet(pkt)
 
-        raise Exception("No such user connected")
+        raise UserNotConnected("No such user connected")
 
     def on_identify(self, hash):
         """
@@ -41,7 +44,7 @@ class ChatNamespace(BaseNamespace, BroadcastMixin):
             # notify all neraby users that you have arrived.
             try:
                 self.send_to_user("new_user", nearby_user.hash, new_user)
-            except Exception:
+            except UserNotConnected:
                 pass #ignore users who are not online
             online_and_nearby.append(nearby_user.to_json())
 
@@ -83,7 +86,7 @@ class ChatNamespace(BaseNamespace, BroadcastMixin):
             # notify all neraby users that you have left
             try:
                 self.send_to_user("remove_user", nearby_user.hash, remove_user)
-            except Exception:
+            except UserNotConnected:
                 pass #ignore users who are not online
 
         self.disconnect(silent=True)

@@ -1,0 +1,22 @@
+#relationships_section {
+    display: none;
+    overflow: hidden;
+}
+
+#relationship_template {
+    display: none;
+}
+
+.relationship {
+    width: 400px;
+    height: 150px;
+    border: 1px solid red;
+    margin: 5px;
+    padding: 3px;
+    float: left;
+}
+
+.relationship h3 {
+    font-size: large;
+    color: red
+}

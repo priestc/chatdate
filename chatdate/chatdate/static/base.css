@@ -17,6 +17,13 @@ header .logo {
     padding-top: 3px;
 }
 
+h1 {
+    padding: 0px;
+    margin: 0px;
+    display: inline;
+    font-size: x-large;
+}
+
 .logo-red {
     color: #FF0000;
 }
@@ -51,28 +58,6 @@ header #right {
 
 .nickname, .rep {
     font-weight: bold;
-}
-
-#relationships_section {
-    display: none;
-    overflow: hidden;
-}
-
-#relationship_template {
-    display: none;
-}
-
-.relationship {
-    width: 400px;
-    height: 150px;
-    border: 1px solid red;
-    margin: 5px;
-    padding: 3px;
-    float: left;
-}
-
-#profile_section {
-    display: none;
 }
 
 #online_section {

@@ -8,9 +8,10 @@
     }
 </style>
 <link rel="stylesheet" type="text/css" href="{% static 'chat.css' %}">
-
+<link rel="stylesheet" type="text/css" href="{% static 'relationship.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'profile.css' %}">
 <div id="online_section">
-    <h1>Who's Online</h1>
+    <h2>Who's Online</h2>
     <div class="users" id="user_template">
         <a href="#" class="nickname"></a>
         (<span class="rep"></span>)
@@ -21,13 +22,13 @@
 </div>
 
 <div id="profile_section">
-    <h1>Preferences</h1>
+    <h2>Profile</h2>
 </div>
 
 <div id="relationships_section">
-    <h1>Relationships</h1>
+    <h2>Relationships</h2>
     <div id="relationship_template">
-        <span class="name"></span><a href="" class="block">Block</a>
+        <h3 class="name"></h3><a href="" class="block">Block</a>
         <br>
         <span class="status"></span>
     </div>
@@ -35,7 +36,7 @@
 
 <div id="chat_section">
 <div class="chat_container" id="chat_template">
-    <h2 class="chat_title"></h2>
+    <h3 class="chat_title"></h3>
     <div class="chatbox">
         <ul></ul>
     </div>
