@@ -23,6 +23,12 @@
 
 <div id="profile_section">
     <h2>Profile</h2>
+    <div id="profile_status"></div>
+    <form id="profile_form" method="post" action=""> 
+        {% csrf_token %}
+        <ul>{{ profile_form.as_ul }}</ul>
+        <input type="submit" value="Save"><br>
+    </form>
 </div>
 
 <div id="relationships_section">
@@ -86,7 +92,7 @@
     $(window).bind("beforeunload", function() { 
         socket.disconnect();
     });
-
+    var profile_url = "{% url 'update_profile' %}"
     var my_nickname = "{{ user.nickname }}";
     var my_hash = "{{ user.hash }}";
     var karma_url = "{% url "karma" %}";

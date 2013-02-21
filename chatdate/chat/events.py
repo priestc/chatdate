@@ -25,7 +25,7 @@ class ChatNamespace(BaseNamespace, BroadcastMixin):
                    endpoint=self.ns_name)
 
         for sess_id, socket in self.socket.server.sockets.items():
-            if socket.session['hash'] == user_hash:
+            if 'hash' in socket.session and socket.session['hash'] == user_hash:
                 return socket.send_packet(pkt)
 
         raise UserNotConnected("No such user connected")

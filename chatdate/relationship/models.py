@@ -125,7 +125,7 @@ class Relationship(models.Model):
         my_stats.my_total_lines += 1
 
         if has_laugh(text):
-            their_stats.laugh_lines += 1
+            their_stats.my_laugh_lines += 1
 
         if has_kissy(text):
             # If I send a kissy message, it gets recorded in her stats

@@ -1,3 +1,7 @@
 #profile_section {
     display: none;
 }
+
+#profile_status {
+    color: red;
+}
