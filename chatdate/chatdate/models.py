@@ -47,10 +47,12 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
     karma_threshold = models.IntegerField(default=0, help_text="Users with less karma than this value will be ignored")
     pics = models.ManyToManyField(Picture)
 
-    hide_straight_males = models.BooleanField(default=True)
-    hide_gay_males = models.BooleanField(default=True)
-    hide_gay_females = models.BooleanField(default=True)
-    hide_straight_females = models.BooleanField(default=True)
+    show_straight_males = models.BooleanField(default=False)
+    show_gay_males = models.BooleanField(default=False)
+    show_bisexual_males = models.BooleanField(default=False)
+    show_gay_females = models.BooleanField(default=False)
+    show_straight_females = models.BooleanField(default=False)
+    show_bisexual_females = models.BooleanField(default=False)
 
     objects = UserManager()
 
@@ -100,54 +102,106 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
         declared sexual preferences and gender.
         """
         if self.gender == 'M':
-            self.hide_gay_females = True
-            self.hide_straight_males = True
+            self.show_gay_females = False
+            self.show_straight_males = False
             
-            if self.sexual_preference == 3: # bisexual
-                self.hide_straight_females = False
-                self.hide_gay_males = False
-            elif self.sexual_preference == 2: # gay
-                self.hide_straight_females = True
-                self.hide_gay_males = False
-            elif self.sexual_preference == 1: #straight
-                self.hide_straight_females = False
-                self.hide_gay_males = True
+            if self.sexual_preference == 3: # bisexual male
+                self.show_straight_females = True
+                self.show_gay_males = True
+                self.show_bisexual_females = True
+                self.show_bisexual_males = True
+            elif self.sexual_preference == 2: # gay male
+                self.show_straight_females = False
+                self.show_gay_males = True
+                self.show_bisexual_females = False
+                self.show_bisexual_males = True
+            elif self.sexual_preference == 1: # straight male
+                self.show_straight_females = True
+                self.show_gay_males = False
+                self.show_bisexual_females = True
+                self.show_bisexual_males = False
         else: # a female
-            self.hide_gay_males = True
-            self.hide_straight_females = True
+            self.show_gay_males = False
+            self.show_straight_females = False
             
-            if self.sexual_preference == 3: # bisexual
-                self.hide_straight_males = False
-                self.hide_gay_females = False
-            elif self.sexual_preference == 2: # gay
-                self.hide_straight_males = True
-                self.hide_gay_females = False
-            elif self.sexual_preference == 1: #straight
-                self.hide_straight_males = False
-                self.hide_gay_females = True
+            if self.sexual_preference == 3: # bisexual female
+                self.show_straight_males = True
+                self.show_gay_females = True
+                self.show_bisexual_females = True
+                self.show_bisexual_males = True
+            elif self.sexual_preference == 2: # gay female
+                self.show_straight_males = False
+                self.show_gay_females = True
+                self.show_bisexual_females = True
+                self.show_bisexual_males = False
+            elif self.sexual_preference == 1: # straight female
+                self.show_straight_males = True
+                self.show_gay_females = False
+                self.show_bisexual_females = False
+                self.show_bisexual_males = True
 
+
+    def apply_preference_filters(self, qs):
+        """
+        Filter a User queryset based on this user's hiding preferences.
+        """
+        if not self.show_gay_females:
+            qs = qs.exclude(gender='F', sexual_preference=2)
+        if not self.show_straight_males:
+            qs = qs.exclude(gender='M', sexual_preference=1)
+        if not self.show_straight_females:
+            qs = qs.exclude(gender='F', sexual_preference=1)
+        if not self.show_gay_males:
+            qs = qs.exclude(gender='M', sexual_preference=2)
+        if not self.show_bisexual_females:
+            qs = qs.exclude(gender='F', sexual_preference=3)
+        if not self.show_bisexual_males:
+            qs = qs.exclude(gender='M', sexual_preference=3)
+
+        return qs
+
+    def cares_about(self, user):
+        if user.gender == 'F':
+            if user.sexual_preference == 1:
+                return not self.show_straight_females
+            if user.sexual_preference == 2:
+                return not self.show_gay_females
+        else:
+            if user.sexual_preference == 1:
+                return not self.show_straight_males
+            if user.sexual_preference == 2:
+                return not self.show_gay_males
 
     def save(self, *a, **k):
         if not self.hash:
             self.hash = hashlib.md5(self.email + settings.SECRET_KEY).hexdigest()
 
-        if self.hide_straight_females and self.hide_gay_males and self.hide_gay_females and self.hide_straight_males:
+        hide_all = all([
+            not self.show_straight_females, not self.show_gay_males,
+            not self.show_gay_females, not self.show_straight_males,
+            not self.show_bisexual_males, not self.show_bisexual_females
+        ])
+
+        if hide_all:
             # this should only happen when first signing up.
             self.set_default_prefs()
 
         super(User, self).save(*a, **k)
 
     def __unicode__(self):
-        return "%s(%s)" % (self.full_name, self.reputation)
+        return "%s(%s)" % (self.get_sexual_preference_display(), self.get_gender_display())
 
     def local_users(self, online=False):
         """
         Return all users within my matching diatance preference.
         """
         #return User.objects.all()
-        tup = (self.location, D(mi=900)) #self.connection_distance))
+        tup = (self.location, D(mi=9000)) #self.connection_distance))
         # .exclude(location__distance_lt=(self.location, models.F('connection_distance')))
         nearby = User.objects.filter(location__distance_lt=tup).exclude(id=self.id)
+
+        nearby = self.apply_preference_filters(nearby)
+
         if online:
             return nearby.filter(readytochat__isnull=False)
         else:

@@ -42,6 +42,8 @@ class ChatNamespace(BaseNamespace, BroadcastMixin):
         online_and_nearby = []
         for nearby_user in user.local_users(online=True):
             # notify all neraby users that you have arrived.
+            if not nearby_user.cares_about(user):
+                continue # don't notify users who are set to ignore my type
             try:
                 self.send_to_user("new_user", nearby_user.hash, new_user)
             except UserNotConnected:
