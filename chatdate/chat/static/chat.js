@@ -58,12 +58,11 @@ function add_to_chatbox(data) {
     }
 
     var chat_container = $("#selection_" + partner_hash)
-    
     var parent_id = chat_container.parent().attr("id");
 
     if(parent_id == "online_section") {
-        console.log("NEW CHATTER");
-        // this chat message has come from a new user. Make a new box.
+        // this chat message has come from a new user. Convert them into a
+        // chat box.
         convert_to_chat(data.sent_by.hash, data.sent_by.nickname);
     }
 
@@ -93,8 +92,8 @@ function add_to_chatbox(data) {
         chat_container.find("ul").append(li);
     });
 
-    //var chatbox = chat_container.find(".chatbox");
-    //chatbox.scrollTop(chatbox[0].scrollHeight);
+    var chatbox = chat_container.find(".chatbox");
+    chatbox.scrollTop(chatbox[0].scrollHeight);
 }
 
 function send_chat_message(to_hash, to_nickname, message) {
@@ -119,7 +118,6 @@ function send_chat_message(to_hash, to_nickname, message) {
             hash: to_hash,
         }
     }
-    console.log(msg);
     socket.emit("message", msg);
 }
 
@@ -134,7 +132,6 @@ function convert_to_chat(hash, nickname) {
         // user.
         var textbox = $(this).find("input[type=text]");
         var message = textbox.val();
-        console.log(hash, nickname, message);
         send_chat_message(hash, nickname, message);
         textbox.val("");
         return false;

@@ -67,13 +67,13 @@
 
     socket.on("new_user", function(data) {
         // each time a new user comes online, the data will come in through this event.
-        console.log("new_user", data);
+        //console.log("new_user", data);
         make_new_online_user(data.new_user);
         $("#online_section #nobody_online").remove();
     });
 
     socket.on("remove_user", function(data) {
-        console.log("remove user", data);
+        //console.log("remove user", data);
         remove_online_user(data);
         if($("#online_section .user").length == 0) {
             $("#online_section").append("<div id='nobody_online'>No one online</div>");
@@ -83,7 +83,7 @@
     socket.on("nearby_users", function(data) {
         // right after connecting, the server will send a list of all users
         // in my area who are online.
-        console.log("local users", data);
+        //console.log("local users", data);
         $.each(data, function(i, user) {
             make_new_online_user(user);
         });
@@ -93,7 +93,7 @@
     });
 
     socket.on('message', function(data) {
-        console.log("got message: ", data);
+        //console.log("got message: ", data);
         add_to_chatbox(data);
     });
 
