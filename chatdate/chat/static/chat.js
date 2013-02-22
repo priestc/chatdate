@@ -19,6 +19,7 @@ function make_new_online_user(user) {
         $("#chat_" + user.hash).removeClass("disabled");
     }
     new_user = $("#user_template").clone();
+    new_user.addClass("users");
     new_user.find(".nickname").text(user.nickname);
     new_user.attr('id', "selection_" + user.hash);
     new_user.find(".status").text(user.status);

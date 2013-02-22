@@ -81,7 +81,7 @@ class ChatNamespace(BaseNamespace, BroadcastMixin):
         ReadyToChat.objects.filter(user__hash=hash).delete()
         User = get_user_model()
         user = User.objects.get(hash=hash)
-        remove_user = {'remove_user': user.to_json()}
+        remove_user = user.to_json()
         for nearby_user in user.local_users(online=True):
             # notify all neraby users that you have left
             try:

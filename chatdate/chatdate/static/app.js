@@ -39,7 +39,6 @@ function update_relationships() {
 }
 
 $("#profile_form").submit(function() {
-    //console.log("XXXX");
     $.post(profile_url, $(this).serialize()).complete(function(response) {
         if(response.responseText == 'OK') {
             $("#profile_status").text("Saved");
