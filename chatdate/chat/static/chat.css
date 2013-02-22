@@ -20,7 +20,6 @@
 
 /* contains all chat containers */ 
 #chat_section {
-    display: none;
     overflow: hidden;
 }
 
@@ -32,10 +31,6 @@
     width: 300px;
     margin: 5px;
     font-size: small;
-}
-
-.chat_container h2 {
-    margin-bottom: 3px;
 }
 
 #chat_template {
@@ -72,13 +67,30 @@
     float: right;
 }
 
-.users {
+#online_section .users .chat_part {
+    display: none;
+}
+
+#online_section .users {
     width: 300px;
     height: 50px;
     padding: 3px;
     margin: 5px;
     border: 1px solid gray;
     float: left;
+}
+
+#chat_section .users {
+    float: left;
+    width: 500px;
+    border: 1px solid gray;
+    height: 310px;
+    padding: 5px;
+    margin: 3px;
+}
+
+#chat_section .users .chat_part {
+    display: block;
 }
 
 .age {

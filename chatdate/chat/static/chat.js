@@ -20,7 +20,7 @@ function make_new_online_user(user) {
     }
     new_user = $("#user_template").clone();
     new_user.addClass("users");
-    new_user.find(".nickname").text(user.nickname);
+    new_user.find(".nickname").text(user.nickname).attr("data-hash", user.hash);
     new_user.attr('id', "selection_" + user.hash);
     new_user.find(".status").text(user.status);
     new_user.find(".age").text("Age: " + user.age);
@@ -52,15 +52,19 @@ function add_to_chatbox(data) {
     // 'data' is the raw payload from socketio. The chat message can either
     // be from me or the other person. It can be a chat or an event.
 
-    var chat_hash = data.sent_by.hash;
+    var partner_hash = data.sent_by.hash;
     if(data.sent_by.hash == my_hash) {
-        chat_hash = data.sent_to.hash;
+        partner_hash = data.sent_to.hash;
     }
-    var chat_container = $("#chat_" + chat_hash);
-    if(chat_container.length == 0) {
-        // this chat messag has come from a new user. Make a new box.
-        make_new_chat(data.sent_by.hash, data.sent_by.nickname);
-        chat_container = $("#chat_" + chat_hash);
+
+    var chat_container = $("#selection_" + partner_hash)
+    
+    var parent_id = chat_container.parent().attr("id");
+
+    if(parent_id == "online_section") {
+        console.log("NEW CHATTER");
+        // this chat message has come from a new user. Make a new box.
+        convert_to_chat(data.sent_by.hash, data.sent_by.nickname);
     }
 
     $.each(data.payload, function(key, value) {
@@ -89,36 +93,14 @@ function add_to_chatbox(data) {
         chat_container.find("ul").append(li);
     });
 
-    var chatbox = chat_container.find(".chatbox");
-    chatbox.scrollTop(chatbox[0].scrollHeight);
+    //var chatbox = chat_container.find(".chatbox");
+    //chatbox.scrollTop(chatbox[0].scrollHeight);
 }
 
-function make_new_chat(hash, nickname) {
-    // make a new chatbox, and bind the sending events.
-
-    $("#chat_section").show();
-
-    var chat_element = $("#chat_" + hash);
-    if(chat_element.length) {
-        chat_element.show();
-    } else {
-        var new_chatbox = $("#chat_template").clone().attr("id", "chat_" + hash);
-        new_chatbox.find(".chat_title").text(nickname);
-        $("#chat_section").append(new_chatbox);
-    }
-
-    new_chatbox.submit(function(event) {
-        return send_chat_message(hash, nickname);
-    });
-}
-
-function send_chat_message(to_hash, to_nickname) {
+function send_chat_message(to_hash, to_nickname, message) {
     // Add a new line to the chat when the "send" button is pressed or
     // enter key is pressed. This function gets binded to new chatboxes when
     // they are created
-    var chatbox =  $('#chat_' + to_hash);
-    var textbox = chatbox.find("input[type=text]");
-    var message = textbox.val();
 
     if(!message) {
         return false
@@ -137,20 +119,33 @@ function send_chat_message(to_hash, to_nickname) {
             hash: to_hash,
         }
     }
+    console.log(msg);
     socket.emit("message", msg);
+}
 
-    textbox.val(""); // clear the chat bar after submitting.
-    return false; // to avoid the form from submitting.
+function convert_to_chat(hash, nickname) {
+    // convert an "online users" box to a chat box.
+
+    box = $("#selection_" + hash);
+    box.appendTo($("#chat_section"));
+    
+    box.find("form").submit(function(event) {
+        // when the user types something into the chatbar, send it off to the
+        // user.
+        var textbox = $(this).find("input[type=text]");
+        var message = textbox.val();
+        console.log(hash, nickname, message);
+        send_chat_message(hash, nickname, message);
+        textbox.val("");
+        return false;
+    });
+    return false;
 }
 
 $("#online_section").on('click', 'a', function() {
-    // open up a new chat window when you click on a users name.
-    var nickname = $(this).text();
-    var hash = $(this).parent().attr("id").substr(10);
-    
-    if($("#chat_" + hash).length == 0) {
-        // don't make duplicate chatboxes for the same user.
-        make_new_chat(hash, nickname);
-    }
-    return false;
+    // convert the "online user" box to a chat box.
+    var t = $(this);
+    var nickname = t.text();
+    var hash = t.attr("data-hash");
+    convert_to_chat(hash, nickname);
 });
