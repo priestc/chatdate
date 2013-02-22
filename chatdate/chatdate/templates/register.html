@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'register.css' %}">
+{% endblock %}
+
+{% block content %}
+
+
+<div id="center_content">
+    <h1>Register New Account</h1>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBTQBbE5JzMZQIRb_RO6EwfnK_T5BvurNo&sensor=false"></script>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.errors }}
+        <table>
+            <tr>
+                <th>{{ form.nickname.label_tag }}</th>
+                <td>{{ form.nickname }}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="help">{{ form.nickname.help_text }}</td>
+            </tr>
+
+            <tr>
+                <th>{{ form.email.label_tag }}</th>
+                <td>{{ form.email }}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="help">{{ form.email.help_text }}</td>
+            </tr>
+
+            <tr>
+                <th>{{ form.password.label_tag }}</th>
+                <td>{{ form.password }}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="help">{{ form.password.help_text }}</td>
+            </tr>
+     
+            <tr>
+                <th>{{ form.password_again.label_tag }}</th>
+                <td>{{ form.password_again }}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="help">{{ form.password_again.help_text }}</td>
+            </tr>
+
+            <tr>
+                <th>{{ form.dob.label_tag }}</th>
+                <td>{{ form.dob }}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="help">{{ form.dob.help_text }}</td>
+            </tr>
+
+            <tr>
+                <th>{{ form.full_name.label_tag }}</th>
+                <td>{{ form.full_name }}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="help">{{ form.full_name.help_text }}</td>
+            </tr>
+
+            <tr>
+                <th>{{ form.gender.label_tag }}</th>
+                <td>{{ form.gender }}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="help">{{ form.gender.help_text }}</td>
+            </tr>
+
+            <tr>
+                <th>{{ form.transgendered.label_tag }}</th>
+                <td>{{ form.transgendered }}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="help">{{ form.transgendered.help_text }}</td>
+            </tr>
+
+            <tr>
+                <th>{{ form.sexual_preference.label_tag }}</th>
+                <td>{{ form.sexual_preference }}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="help">{{ form.sexual_preference.help_text }}</td>
+            </tr>
+
+            <tr>
+                <th>{{ form.location.label_tag }}</th>
+                <td><div id="map_canvas"></div></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="help">{{ form.location.help_text }}</td>
+            </tr>
+
+            <tr>
+                <th>{{ form.specific_location.label_tag }}</th>
+                <td>{{ form.specific_location }}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="help">{{ form.specific_location.help_text }}</td>
+            </tr>
+        </table>
+        {{ form.location }}
+        <input type="submit">
+    </form>
+</div>
+<script type="text/javascript">
+    function fill_in_wkt() {
+        var loc = marker.getPosition();
+        var wkt = "POINT(" + loc.lat() + ' ' + loc.lng() + ")";
+        $("#id_location").val(wkt);
+        console.log(wkt);
+    }
+    function place_marker(pos) {
+        var latlng = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude)
+        marker = new google.maps.Marker({
+            position: latlng,
+            map: map,
+            draggable: true,
+            title:"My Location"
+        });
+        google.maps.event.addListener(marker, 'dragend', function () {
+            // when the marker is dragged around, update the form with
+            // the markers new location
+            fill_in_wkt();
+        });
+        fill_in_wkt()
+        map.setCenter(latlng);
+        console.log(pos.coords.latitude, pos.coords.longitude); 
+    }
+
+    var map, marker;
+    $(function() {
+        if(navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(place_marker);
+        } else {
+            place_marker({coords: {latitude: -34, longitude: 150}});
+        }
+        var mapOptions = {
+            center: new google.maps.LatLng(-34.397, 150.644),
+            zoom: 8,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        map = new google.maps.Map($("#map_canvas")[0], mapOptions);
+    });
+</script>
+
+{% endblock %}

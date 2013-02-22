@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'landingpage.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="center_content">
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <p>
+        SwoonLounge is an online community for meeting and chatting with other people in your area.
+        Unlike other online dating sites where window shopping is the name of the game,
+        SwoonLounge encourages interaction over compatibility matching algorithms.
+
+    </p>
+
+    <div id="login_form">
+        <h2>Login</h2>
+        <form method="post">
+            {% csrf_token %}
+            <label for="email">Email:</label> <input id="email" type="email" name="email">
+            <label for="password">Password:</label> <input id="password" type="password" name="password">
+            <input type="submit" value="Login"> or <a href="{% url "register_start" %}">Register</a>
+        </form>
+    </div>
+</div>
+{% endblock %}
