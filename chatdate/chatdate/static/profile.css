@@ -5,3 +5,8 @@
 #profile_status {
     color: red;
 }
+
+.helptext {
+    color: gray;
+    font-size: small;
+}

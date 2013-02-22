@@ -23,7 +23,8 @@ function make_new_online_user(user) {
     new_user.find(".nickname").text(user.nickname).attr("data-hash", user.hash);
     new_user.attr('id', "selection_" + user.hash);
     new_user.find(".status").text(user.status);
-    new_user.find(".age").text("Age: " + user.age);
+    new_user.find(".location").text(user.location);
+    new_user.find(".age").text(user.age);
     new_user.find(".rep").text(user.reputation);
 
     if(user.gender == 'F') {

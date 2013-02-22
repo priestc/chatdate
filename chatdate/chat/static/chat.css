@@ -93,7 +93,7 @@
     display: block;
 }
 
-.age {
+.age, .rep, .location {
     font-style: italic;
 }
 
