@@ -47,6 +47,11 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
     karma_threshold = models.IntegerField(default=0)
     pics = models.ManyToManyField(Picture)
 
+    hide_straight_males = models.BooleanField(default=True)
+    hide_gay_males = models.BooleanField(default=True)
+    hide_gay_females = models.BooleanField(default=True)
+    hide_straight_females = models.BooleanField(default=True)
+
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
@@ -88,9 +93,47 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
     def is_authenticated(self):
         return True
 
+    def set_default_prefs(self):
+        """
+        When a user first signs up, set their hiding preferences up based on their
+        declared sexual preferences and gender.
+        """
+        if self.gender == 'M':
+            self.hide_gay_females = True
+            self.hide_straight_males = True
+            
+            if self.sexual_preference == 3: # bisexual
+                self.hide_straight_females = False
+                self.hide_gay_males = False
+            elif self.sexual_preference == 2: # gay
+                self.hide_straight_females = True
+                self.hide_gay_males = False
+            elif self.sexual_preference == 1: #straight
+                self.hide_straight_females = False
+                self.hide_gay_males = True
+        else: # a female
+            self.hide_gay_males = True
+            self.hide_straight_females = True
+            
+            if self.sexual_preference == 3: # bisexual
+                self.hide_straight_males = False
+                self.hide_gay_females = False
+            elif self.sexual_preference == 2: # gay
+                self.hide_straight_males = True
+                self.hide_gay_females = False
+            elif self.sexual_preference == 1: #straight
+                self.hide_straight_males = False
+                self.hide_gay_females = True
+
+
     def save(self, *a, **k):
         if not self.hash:
             self.hash = hashlib.md5(self.email + settings.SECRET_KEY).hexdigest()
+
+        if self.hide_straight_females and self.hide_gay_males and self.hide_gay_females and self.hide_straight_males:
+            # this should only happen when first signing up.
+            self.set_default_prefs()
+
         super(User, self).save(*a, **k)
 
     def __unicode__(self):
