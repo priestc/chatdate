@@ -25,6 +25,7 @@ class RelationshipStats(models.Model):
     `span_detected` gets flipped to True after a mesage has been sent more than
     24 hours apart. These represent the things Ive done in the relatinship.
     """
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="stats")
     im_a_long_distance_partner = models.BooleanField(default=False)
     im_a_high_karma_partner = models.BooleanField(default=False)
     my_laugh_lines = models.IntegerField(default=0)
@@ -35,6 +36,8 @@ class RelationshipStats(models.Model):
     i_gave_away_rl_name = models.BooleanField()
     i_gave_away_pictures = models.BooleanField()
 
+    def __unicode__(self):
+        return "%s %s" % (self.id, self.user.nickname)
 
 class RelationshipManager(models.Manager):
     def my_relationships(self, user):
@@ -51,8 +54,8 @@ class RelationshipManager(models.Manager):
             User = get_user_model()
             user1 = User.objects.get(hash=hashes[0])
             user2 = User.objects.get(hash=hashes[1])
-            stat1 = RelationshipStats.objects.create()
-            stat2 = RelationshipStats.objects.create()
+            stat1 = RelationshipStats.objects.create(user=user1)
+            stat2 = RelationshipStats.objects.create(user=user2)
             return Relationship.objects.create(
                 user1=user1, user2=user2,
                 user1_stats=stat1, user2_stats=stat2
@@ -132,7 +135,7 @@ class Relationship(models.Model):
             their_stats.kissy_lines += 1
 
         if django.utils.timezone.now() - self.start_date > datetime.timedelta(hours=24):
-            my_stats.span_detected = True
+            my_stats.my_span_detected = True
 
         my_stats.save()
         their_stats.save()        
