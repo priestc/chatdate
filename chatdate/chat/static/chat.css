@@ -108,3 +108,11 @@
 #user_template {
     display: none;
 }
+
+.button_bar {
+    padding: 2px;
+}
+
+.chat_bar {
+    overflow: hidden;
+}
