@@ -141,9 +141,9 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
                 self.show_bisexual_males = True
 
 
-    def apply_preference_filters(self, qs):
+    def apply_preference_excludes(self, qs):
         """
-        Filter a User queryset based on this user's hiding preferences.
+        Exclude users from a User queryset based on this user's hiding preferences.
         """
         if not self.show_gay_females:
             qs = qs.exclude(gender='F', sexual_preference=2)
@@ -161,16 +161,23 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
         return qs
 
     def cares_about(self, user):
+        """
+        Does this user care about chatting with the passed in user?
+        """
         if user.gender == 'F':
             if user.sexual_preference == 1:
-                return not self.show_straight_females
+                return self.show_straight_females
             if user.sexual_preference == 2:
-                return not self.show_gay_females
+                return self.show_gay_females
+            if user.sexual_preference == 3:
+                return self.show_bisexual_females
         else:
             if user.sexual_preference == 1:
-                return not self.show_straight_males
+                return self.show_straight_males
             if user.sexual_preference == 2:
-                return not self.show_gay_males
+                return self.show_gay_males
+            if user.sexual_preference == 3:
+                return self.show_bisexual_males
 
     def save(self, *a, **k):
         if not self.hash:
@@ -189,7 +196,7 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
         super(User, self).save(*a, **k)
 
     def __unicode__(self):
-        return "%s(%s)" % (self.get_sexual_preference_display(), self.get_gender_display())
+        return "%s %s" % (self.get_sexual_preference_display(), self.get_gender_display())
 
     def local_users(self, online=False):
         """
@@ -200,7 +207,7 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
         # .exclude(location__distance_lt=(self.location, models.F('connection_distance')))
         nearby = User.objects.filter(location__distance_lt=tup).exclude(id=self.id)
 
-        nearby = self.apply_preference_filters(nearby)
+        nearby = self.apply_preference_excludes(nearby)
 
         if online:
             return nearby.filter(readytochat__isnull=False)
