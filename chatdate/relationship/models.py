@@ -35,6 +35,7 @@ class RelationshipStats(models.Model):
     my_span_detected = models.BooleanField(default=False)
     i_gave_away_rl_name = models.BooleanField()
     i_gave_away_pictures = models.BooleanField()
+    blocked = models.BooleanField(default=False)
 
     def __unicode__(self):
         return "%s %s" % (self.id, self.user.nickname)
@@ -73,11 +74,14 @@ class Relationship(models.Model):
 
     start_date = models.DateTimeField(auto_now_add=True)
     end_date = models.DateTimeField(blank=True, null=True)
-    blocked = models.BooleanField(default=False)
     status = models.IntegerField(choices=RELATIONSHIP_STATUSES, default=0)
     met = models.BooleanField(default=False)
 
     objects = RelationshipManager()
+
+    @property
+    def blocked(self):
+        return self.user1_stats.blocked or self.user2_stats.blocked
 
     def __unicode__(self):
         return "%s + %s (%s)" % (self.user1.nickname, self.user2.nickname, self.get_status_display())
@@ -111,6 +115,23 @@ class Relationship(models.Model):
         }
 
         return ret
+
+    def record_like(self, sent_by_hash):
+        person_who_sent_like = self.user1_stats
+        if self.user1.hash == sent_by_hash:
+            person_who_sent_like = self.user2_stats
+
+        person_who_sent_like.i_like_her = True
+        person_who_sent_like.save()
+
+    def record_block(self, sent_by_hash):
+        person_who_sent_block = self.user1_stats
+        if self.user1.hash == sent_by_hash:
+            person_who_sent_block = self.user2_stats
+
+        person_who_sent_block.blocked = True
+        person_who_sent_block.save()
+
 
     def process_message(self, text, sent_by):
         """

@@ -75,6 +75,7 @@ function add_to_chatbox(data) {
             var line = "<span class='chat-message chat-message-" + n + "'>&lt;" + n + "&gt;</span> " + value;
             li.html(line);
         } else if (key == 'event') {
+            // an event message, such as relationship promotion.
             var message;
             if (value.relationship_status) {
                 message = "You relationship has been upgraded to " + value.relationship_status + "!";
@@ -84,6 +85,10 @@ function add_to_chatbox(data) {
                 message = value;
             }
             li.html("<span class='chat_event'>" + message + "</span> <span class='rep_added'>" + rep_increase + "</span>");
+        } else if (key == 'like') {
+            li.html("<span class=\"verify\">You now like " + value + "</span>");
+        } else if (key == "blocked") {
+            li.html("<span class=\"verify\">You have just blocked " + value + "</span>");
         } else if (key == 'connection') {
             // disconnect or reconnect event
             li.html("<span class='connection_event'>" + value + "</span>");
@@ -146,4 +151,38 @@ $("#online_section").on('click', 'a', function() {
     var nickname = t.text();
     var hash = t.attr("data-hash");
     convert_to_chat(hash, nickname);
+});
+
+$("#chat_section").on('click', '.like_button', function() {
+    var a = $(this).parent().parent().parent().find("a.nickname");
+    var hash = a.attr("data-hash");
+    var nickname = a.text();
+    var msg = {
+        sent_by: {
+            nickname: my_nickname,
+            hash: my_hash
+        },
+        person_i_like: {
+            hash: hash,
+            nickname: nickname
+        }
+    }
+    socket.emit("like", msg);
+});
+
+$("#chat_section").on('click', '.block_button', function() {
+    var a = $(this).parent().parent().parent().find("a.nickname");
+    var hash = a.attr("data-hash");
+    var nickname = a.text();
+    var msg = {
+        sent_by: {
+            nickname: my_nickname,
+            hash: my_hash
+        },
+        person_i_blocked: {
+            hash: hash,
+            nickname: nickname
+        }
+    }
+    socket.emit("block", msg);
 });

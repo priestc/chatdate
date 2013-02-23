@@ -113,6 +113,10 @@
     padding: 2px;
 }
 
+.button_bar a {
+    text-decoration: none;
+}
+
 .chat_bar {
     overflow: hidden;
 }

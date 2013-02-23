@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block content %}
+{% block extrahead %}
 {% load staticfiles %}
 <style>
     .chat-message-{{ user.nickname }} {
@@ -10,6 +10,9 @@
 <link rel="stylesheet" type="text/css" href="{% static 'chat.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'relationship.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'profile.css' %}">
+{% endblock %}
+
+{% block content %}
 <div id="online_section">
     <h2>Who's Online</h2>
     <div id="user_template">
@@ -32,11 +35,22 @@
                 </form>
             </div>
             <div class="button_bar">
-                <a href="#"><img alt="Show this user your Facebook account" width="30" height="30" src="{% static 'facebook_logo.png' %}"></a>
-                <a href="#"><img alt="Show this user your real name" width="30" height="30" src="{% static 'identity_logo.png' %}"></a>
-                <a href="#"><img alt="I like this user" width="30" height="30" src="{% static 'heart_logo.png' %}"></a>
+                <a href="#" class="facebook_button">
+                    <img alt="Show this user your Facebook account" width="30" height="30" src="{% static 'facebook_logo.png' %}">
+                </a>
+                <a href="#" class="real_name_button">
+                    <img alt="Show this user your real name" width="30" height="30" src="{% static 'identity_logo.png' %}">
+                </a>
+                <a href="#" class="like_button">
+                    <img alt="I like this user" width="30" height="30" src="{% static 'heart_logo.png' %}">
+                </a>
+                <a href="#" class="occupation_button">
+                    <img alt="Show this user my occupation" width="30" height="30" src="{% static 'occupation_logo.png' %}">
+                </a>
+                <a href="#" class="block_button">
+                    <img alt="Block this user" width="30" height="30" src="{% static 'block_logo.png' %}">
+                </a>
             </div>
-
         </div>
     </div>
 </div>
@@ -99,6 +113,13 @@
         if(data.length == 0) {
             $("#online_section").append("<div id='nobody_online'>No one online</div>");
         }
+    });
+
+    socket.on('verify', function(data) {
+        // when a user clicks on the like button or the block button or whatever
+        // the confirmation of thatevent comes back on this channel.
+        console.log(data);
+        add_to_chatbox(data);
     });
 
     socket.on('message', function(data) {

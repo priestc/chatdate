@@ -72,8 +72,35 @@ class ChatNamespace(BaseNamespace, BroadcastMixin):
         sent_by_package['payload'].update(info_for_sent_by)
         sent_by_package['payload'].update(info_for_both)
 
-        self.send_to_user("message", sent_to, sent_to_package)
+        if not relationship.blocked:
+            self.send_to_user("message", sent_to, sent_to_package)
         self.send_to_user("message", sent_by, sent_by_package)
+
+    def on_like(self, message):
+        """
+        When a user clicks the like button, record the like in the relationship
+        table, and then send back a confirmation message.
+        """
+        hash1 = message['sent_by']['hash']
+        hash2 = message['person_i_like']['hash']
+        r = Relationship.objects.get_or_make_relationship(hash1, hash2)
+        r.record_like(hash1)
+        self.send_to_user("verify", hash1, {
+            "sent_by": {"hash": hash2},
+            "sent_to": {"hash": hash1},
+            "payload": {"like": message['person_i_like']['nickname']}
+        })
+
+    def on_block(self, message):
+        hash1 = message['sent_by']['hash']
+        hash2 = message['person_i_blocked']['hash']
+        r = Relationship.objects.get_or_make_relationship(hash1, hash2)
+        r.record_block(hash1)
+        self.send_to_user("verify", hash1, {
+            "sent_by": {"hash": hash2},
+            "sent_to": {"hash": hash1},
+            "payload": {"blocked": message['person_i_blocked']['nickname']}
+        })
 
     def recv_disconnect(self):
         """
