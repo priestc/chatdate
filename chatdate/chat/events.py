@@ -84,23 +84,27 @@ class ChatNamespace(BaseNamespace, BroadcastMixin):
         hash1 = message['sent_by']['hash']
         hash2 = message['person_i_like']['hash']
         r = Relationship.objects.get_or_make_relationship(hash1, hash2)
-        r.record_like(hash1)
-        self.send_to_user("verify", hash1, {
-            "sent_by": {"hash": hash2},
-            "sent_to": {"hash": hash1},
-            "payload": {"like": message['person_i_like']['nickname']}
-        })
+        liked = r.record_like(hash1)
+        
+        if liked:
+            self.send_to_user("verify", hash1, {
+                "sent_by": {"hash": hash2},
+                "sent_to": {"hash": hash1},
+                "payload": {"like": message['person_i_like']['nickname']}
+            })
 
     def on_block(self, message):
         hash1 = message['sent_by']['hash']
         hash2 = message['person_i_blocked']['hash']
         r = Relationship.objects.get_or_make_relationship(hash1, hash2)
-        r.record_block(hash1)
-        self.send_to_user("verify", hash1, {
-            "sent_by": {"hash": hash2},
-            "sent_to": {"hash": hash1},
-            "payload": {"blocked": message['person_i_blocked']['nickname']}
-        })
+        blocked = r.record_block(hash1)
+        
+        if blocked:
+            self.send_to_user("verify", hash1, {
+                "sent_by": {"hash": hash2},
+                "sent_to": {"hash": hash1},
+                "payload": {"blocked": message['person_i_blocked']['nickname']}
+            })
 
     def recv_disconnect(self):
         """

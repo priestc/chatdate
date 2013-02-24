@@ -121,16 +121,22 @@ class Relationship(models.Model):
         if self.user1.hash == sent_by_hash:
             person_who_sent_like = self.user2_stats
 
-        person_who_sent_like.i_like_her = True
-        person_who_sent_like.save()
+        if not person_who_sent_like.i_like_her:
+            person_who_sent_like.i_like_her = True
+            person_who_sent_like.save()
+            return True
+        return False
 
     def record_block(self, sent_by_hash):
         person_who_sent_block = self.user1_stats
         if self.user1.hash == sent_by_hash:
             person_who_sent_block = self.user2_stats
 
-        person_who_sent_block.blocked = True
-        person_who_sent_block.save()
+        if not person_who_sent_block.blocked:
+            person_who_sent_block.blocked = True
+            person_who_sent_block.save()
+            return True
+        return False
 
 
     def process_message(self, text, sent_by):
