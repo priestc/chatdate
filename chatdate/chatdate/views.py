@@ -9,6 +9,9 @@ from django.contrib.auth import logout as dj_logout
 
 from .forms import RegisterForm, UserEditForm
 
+def handle_upload(request):
+    pass
+
 def update_profile(request):
     form = UserEditForm(request.POST, instance=request.user)
     if form.is_valid():

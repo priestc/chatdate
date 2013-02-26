@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
 import django.utils.timezone
+from badges import BADGES
 
 def has_laugh(text):
     return "hehe" in text or "haha" in text or "lol" in text
@@ -11,13 +12,13 @@ def has_laugh(text):
 def has_kissy(text):
     return ":*" in text or ";-*" in text or ":-*" in text or "<3" in text
 
-RELATIONSHIP_STATUSES = (
-    (0, "You don't exist"),
-    (1, 'Contact'),
-    (2, 'Acquaintance'),
-    (3, 'Friends'),
-    (4, 'IRL Friends'),
-)
+class RelationshipBadge(models.Model):
+    """
+    Represents an achievement between two people in a relationship.
+    """
+    relationship = models.ForeignKey('Relationship')
+    name = models.CharField(max_length=32)
+    time_awarded = models.DateTimeField(auto_now_add=True)
 
 class RelationshipStats(models.Model):
     """
@@ -74,7 +75,6 @@ class Relationship(models.Model):
 
     start_date = models.DateTimeField(auto_now_add=True)
     end_date = models.DateTimeField(blank=True, null=True)
-    status = models.IntegerField(choices=RELATIONSHIP_STATUSES, default=0)
     met = models.BooleanField(default=False)
 
     objects = RelationshipManager()
@@ -85,6 +85,17 @@ class Relationship(models.Model):
 
     def __unicode__(self):
         return "%s + %s (%s)" % (self.user1.nickname, self.user2.nickname, self.get_status_display())
+
+    def award_badge(self, badge):
+        """
+        Create the row in the RelationshipBadge table recording this badge,
+        and increate each user's karma.
+        """
+        RelationshipBadge.objects.create(relationship=self, name=badge.name)
+        self.user1.reputation += badge.karma_award
+        self.user2.reputation += badge.karma_award
+        self.user1.save()
+        self.user2.save()
 
     def to_json(self, perspective):
         """
@@ -107,7 +118,6 @@ class Relationship(models.Model):
         ret = {
             'id': self.pk,
             'start_date': self.start_date.strftime("%B %d, %Y"),
-            'status': self.get_status_display(),
             'met': self.met,
             'name': name,
             'gender': other_person.gender,
@@ -168,73 +178,19 @@ class Relationship(models.Model):
         their_stats.save()        
         self.save()
 
-    def evaluate_status(self):
-        """
-        Look at the relatinship status, and determine what level they are at.
-        Returned is a integer representing values in RELATIONSHIP_STATUSES
-        """
-        if self.status >= 4 and self.have_met:
-            return 5 # irl friends
-
-        both_like = self.user1_stats.i_like_her and self.user2_stats.i_like_her
-        if self.status >= 3 and both_like:
-            return 4 # more than friends
-
-        both_span_detected = self.user1_stats.my_span_detected and self.user2_stats.my_span_detected
-        if self.status >= 2 and both_span_detected:
-            return 3 # friends
-
-        both_ten_lines = self.user1_stats.my_total_lines >= 10 and self.user2_stats.my_total_lines >= 10
-        if self.status >= 1 and both_ten_lines:
-            return 2 # acquaintance
-
-        if self.user1_stats.my_total_lines >= 1 and self.user2_stats.my_total_lines >= 1:
-            return 1 # contact
-        
-        return 0
-
     def get_changes(self):
         """
         After each message has been processed, call this function to get any
         changes to the relationship so we can notify the user.
         """
-        sender = sent_to = both = {}
-        
-        new_status = self.evaluate_status()
-        if new_status != self.status:
-            self.status = new_status
-            increased = self.increase_rep(new_status=new_status)
-            self.save()
-            both = {
-                'event': {
-                    'relationship_status': self.get_status_display(),
-                    'rep_increase': increased,
-                }
-            }
-
+        sender = sent_to = both = []
+        for badge in BADGES:
+            if badge.eligible(self):
+                self.award_badge(badge)
+                both.append({
+                    'event': {
+                        'new_badge': badge.name,
+                        'rep_increase': badge.karma_award,
+                    }
+                })
         return sender, sent_to, both
-
-    def increase_rep(self, new_status=None):
-        """
-        This function handles increasing the users rep after certain events
-        """
-        increase = 0
-        if new_status:
-            if new_status == 1:
-                # got a response
-                increase = 1
-            elif new_status == 2:
-                # ten chat messages exchanged
-                increase = 20
-            elif new_status == 3:
-                # bridged the 24 hour gap.
-                increase = 50
-            elif new_status == 4:
-                # met IRL
-                increase = 100
-
-        self.user1.reputation += increase
-        self.user2.reputation += increase
-        self.user1.save()
-        self.user2.save()
-        return increase
